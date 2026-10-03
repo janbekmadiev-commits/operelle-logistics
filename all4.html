@@ -2230,7 +2230,7 @@ const LEAD_ST={new:['Не связывались','b-slate'],sent:['Написа
 const getLeadSt=()=>LS.get('operelleLeads',{})||{};
 const leadKey=c=>c.bin||c.site||c.name;
 const digits=s=>String(s||'').replace(/\D/g,'');
-const DEMO_LINK='https://janbekmadiev-commits.github.io/operelle-logistics/';
+const DEMO_LINK=new URL('.',location.href).href;
 function leadMail(i){
   const c=KZ_COMPANIES[i], subj='Бесплатная программа для логистической компании: OPERELLE Logistics';
   const body='Здравствуйте!\n\nМеня зовут Айдана Серикова, я руководитель OPERELLE Logistics. Мы даём логистическим компаниям бесплатную программу: панель диспетчера, карту рейсов, сайт с расчётом перевозки, кабинеты водителей и клиентов, ленту заказов с бирж.\n\nПлатить за программу не нужно: компания включает платные услуги только по желанию.\n\nДемо: '+DEMO_LINK+'\n\nУдобно ли созвониться на 15 минут на этой неделе?\n\nС уважением,\nАйдана Серикова\nOPERELLE Logistics';

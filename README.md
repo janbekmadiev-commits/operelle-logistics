@@ -5,7 +5,7 @@
 
 Открыть: https://janbekmadiev-commits.github.io/operelle-logistics/
 
-- `index.html`: стартовая страница с кнопками «Поделиться» и QR-кодами
+- `index.html`: стартовая страница с кнопками «Поделиться» и QR-кодами (адрес берётся от места, где лежит сайт)
 - `all4.html`: единая панель OPERELLE на четыре направления
 - `p-auto-*.html`, `p-air-*.html`, `p-rail-*.html`, `p-sea-*.html`: сайт и панель каждого направления
 - `help.html`: инструкция

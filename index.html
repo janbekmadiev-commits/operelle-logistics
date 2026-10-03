@@ -11,6 +11,7 @@
 <style>/* Стартовая страница открытого демо: тёмная тема продукта, золотой акцент OPERELLE. */
 :root{--bg:#08090B;--card:#111316;--card2:#16191D;--line:#262A31;--text:#F2F3F5;--muted:#A7ADB8;--gold:#E3B341;--ink:#1A1405;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 "Fira Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:0 16px}
 .wrap{max-width:860px;margin:0 auto;padding-block:26px 56px}
@@ -76,15 +77,20 @@ dialog .acts .wide{grid-column:1/-1}
   </div>
   <p id="copied" role="status"></p>
 </dialog>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 /* кто вошёл через стартовую страницу, видит в списке перехода все программы */
 try{localStorage.setItem('operelleNavScope','all')}catch(e){}
-const SHARE={"index": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/", "name": "OPERELLE Logistics: все программы"}, "all4": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/all4.html", "name": "Единая панель OPERELLE"}, "auto": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-auto-site.html", "name": "Автоперевозки: сайт и панель"}, "air": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-air-site.html", "name": "Авиаперевозки: сайт и панель"}, "rail": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-rail-site.html", "name": "ЖД перевозки: сайт и панель"}, "sea": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-sea-site.html", "name": "Морские перевозки: сайт и панель"}};
+const SHARE={"index": {"page": "", "name": "OPERELLE Logistics: все программы"}, "all4": {"page": "all4.html", "name": "Единая панель OPERELLE"}, "auto": {"page": "p-auto-site.html", "name": "Автоперевозки: сайт и панель"}, "air": {"page": "p-air-site.html", "name": "Авиаперевозки: сайт и панель"}, "rail": {"page": "p-rail-site.html", "name": "ЖД перевозки: сайт и панель"}, "sea": {"page": "p-sea-site.html", "name": "Морские перевозки: сайт и панель"}};
 const dlg=document.getElementById('dlg'), $=id=>document.getElementById(id);
+/* адрес сайта берётся из адресной строки: страница работает на любом хостинге без переделки */
+const BASE=new URL('.',location.href).href;
+function qrSrc(url){ try{ const q=qrcode(0,'M'); q.addData(url); q.make(); return q.createDataURL(6,12); }catch(e){ return ''; } }
 let cur=null;
 function openShare(k){
-  cur=SHARE[k]; const text='OPERELLE Logistics, демо. '+cur.name;
-  $('dName').textContent=cur.name; $('dUrl').textContent=cur.url; $('dQr').src='qr/'+k+'.png'; $('copied').textContent='';
+  cur={name:SHARE[k].name,url:BASE+SHARE[k].page}; const text='OPERELLE Logistics, демо. '+cur.name;
+  const src=qrSrc(cur.url); $('dQr').hidden=!src; if(src) $('dQr').src=src;
+  $('dName').textContent=cur.name; $('dUrl').textContent=cur.url; $('copied').textContent='';
   $('dWa').href='https://wa.me/?text='+encodeURIComponent(text+': '+cur.url);
   $('dTg').href='https://t.me/share/url?url='+encodeURIComponent(cur.url)+'&text='+encodeURIComponent(text);
   $('dNative').hidden=!navigator.share;

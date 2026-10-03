@@ -7,9 +7,10 @@
 <meta name="theme-color" content="#08090B">
 <title>Инструкция OPERELLE</title>
 <style>
-/* Инструкция без скриптов: открывается и на сайте, и как файл на телефоне. */
+/* Инструкция: ссылка и QR-код подставляются от адреса сайта. */
 :root{--bg:#08090B;--card:#111316;--line:#262A31;--text:#F2F3F5;--muted:#A7ADB8;--gold:#E3B341;--ink:#1A1405;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding:0 16px}
 .wrap{max-width:720px;margin:0 auto;padding-block:28px 48px}
@@ -41,8 +42,8 @@ a{color:var(--gold)}
 <p class="lead">Открывается на любом телефоне и компьютере. Регистрация и программы не нужны.</p>
 
 <h2><span>1</span>Ссылка</h2>
-<a class="link" href="https://janbekmadiev-commits.github.io/operelle-logistics/">https://janbekmadiev-commits.github.io/operelle-logistics/</a>
-<div class="card qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAAGGAQMAAABFTrSmAAAABlBMVEUAAAD///+l2Z/dAAAAAnRSTlP//8i138cAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAIKSURBVHic7ZpNroMwDIQtcYAeiatzJA6A5BLb4yS0m+5e/MYLBMFfNp36L4j+akKCBAkSJBYgLgl7XXHZ7zU97gfVc1O7MyNRh/Df/3g1v9e9uKcmDGtr6UeiCPF8AW1gl5APiXqE3W2uF9lPEv+AaCsmkBYe5GYjL5AoSJi5X08Jt0r6Y/qRqEGEIQp8XOBAogrRDdnA3gicJxcSJYjwEw//JyoAyZo/AwWJKsSkkm6uF6/5bT8SxYiQhWO9zDtcOSKfKiGxMIEKwF+opiKQHI4MGSSKEKqTLGJGi0Rw5VaXkKhCRA7o3Xusnejo3SZdkViecJVIH+VEsHBfjwwBkihDRFWP+t5UIjAU/iSqEJrd+wYMehHr+EiUIyL8x3/ftZHD+VTJYwZAYnFiGNZI7+NRCYZoZOoNSJQghnYuQ4FX+hASiTpEd44ooFeEBxOIOX7JBiSWJnI2d2QtYNZmN10vJKoQzYa8r1OZd2KoA72QqEHEIz6q6SnBNDSyJGoQWdDP2WA4hxUM7EkUIbqBjaO3Lc/ZsQGJIkTowEc5trjbxRMBqgIYiRqE33vB19t6zTSBwp9EIaLFg3D2bG/n7KN5aUCiHHFNTujzotKf+0ESZQi0cxJ5YcD0u0pILEqYeWOHyDD0dLbfozcgsTjRQ0Gcv2GKE+W+Xs9sQGJt4jcjQYIECRJ/nXgDja7tXMo4r8EAAAAASUVORK5CYII=" alt="QR-код со ссылкой на OPERELLE"><div><b>QR-код.</b> Наведите камеру телефона на код и нажмите на появившуюся ссылку.</div></div>
+<a class="link" id="hLink" href="index.html">Стартовая страница</a>
+<div class="card qr"><img id="hQr" alt="QR-код со ссылкой на OPERELLE" hidden><div><b>QR-код.</b> Наведите камеру телефона на код и нажмите на появившуюся ссылку.</div></div>
 
 <h2><span>2</span>Как отправить людям</h2>
 <ol>
@@ -93,5 +94,11 @@ a{color:var(--gold)}
 <p>Демо хранит заявки и настройки в памяти браузера на этом устройстве. У каждого человека они свои. Компании, заявки, ставки и расписания показаны для примера.</p>
 <p><a href="index.html">На стартовую страницу</a></p>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+/* ссылка и QR-код строятся от адреса, где лежит сайт */
+(function(){var base=new URL('.',location.href).href,a=document.getElementById('hLink');a.href=base;a.textContent=base;
+  try{var q=qrcode(0,'M');q.addData(base);q.make();var i=document.getElementById('hQr');i.src=q.createDataURL(6,12);i.hidden=false}catch(e){}})();
+</script>
 </body>
 </html>
