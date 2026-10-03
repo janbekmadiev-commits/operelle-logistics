@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#08090B">
+<title>OPERELLE Logistics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600;700;800&display=swap">
+<style>/* Стартовая страница открытого демо: тёмная тема продукта, золотой акцент OPERELLE. */
+:root{--bg:#08090B;--card:#111316;--card2:#16191D;--line:#262A31;--text:#F2F3F5;--muted:#A7ADB8;--gold:#E3B341;--ink:#1A1405;color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 "Fira Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:0 16px}
+.wrap{max-width:860px;margin:0 auto;padding-block:26px 56px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.mark{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(145deg,#F3D27A,#8C6A1E);color:var(--ink);font-weight:800;font-size:22px}
+.brand b{display:block;font-size:17px;letter-spacing:.08em}
+.brand small{display:block;font-size:11px;letter-spacing:.3em;color:var(--muted);text-transform:lowercase}
+h1{margin:0 0 8px;font-size:clamp(28px,7vw,40px);line-height:1.08;letter-spacing:-.01em}
+.lead{margin:0 0 22px;color:var(--muted);max-width:36em}
+h2{margin:34px 0 12px;font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#7A818D}
+.card{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.main{border-color:var(--gold);background:linear-gradient(180deg,rgba(227,179,65,.10),rgba(227,179,65,.03))}
+.card b{font-size:19px;line-height:1.2}
+.card p{margin:0;color:var(--muted);font-size:14.5px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:9px 14px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font:600 14.5px/1.2 inherit;font-family:inherit;text-decoration:none;cursor:pointer}
+.btn:hover{border-color:var(--gold)}
+.btn.g{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:700}
+.btn.s{color:var(--gold)}
+.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.fgroup{border-top:1px solid var(--line);padding:12px 0}
+.fgroup h3{margin:0 0 6px;font-size:15px}
+.fgroup a{display:block;padding:7px 0;color:var(--muted);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;font-size:15px}
+.fgroup a:hover{color:var(--text)}
+.note{color:var(--muted);font-size:14px;margin:10px 0 0}
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--text);padding:18px;width:min(400px,calc(100vw - 24px));max-height:calc(100vh - 24px);overflow:auto}
+dialog::backdrop{background:rgba(0,0,0,.7)}
+dialog h3{margin:0 0 4px;font-size:18px}
+dialog .url{display:block;word-break:break-all;font:600 13.5px/1.4 ui-monospace,Menlo,Consolas,monospace;color:var(--gold);margin:8px 0 12px}
+dialog img{display:block;width:210px;height:210px;margin:0 auto 14px;background:#fff;border-radius:10px;padding:6px;image-rendering:pixelated}
+dialog .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+dialog .acts .wide{grid-column:1/-1}
+#copied{min-height:20px;margin:10px 0 0;text-align:center;color:#8FE0B5;font-size:14px}
+@media (max-width:640px){.grid{grid-template-columns:minmax(0,1fr)}.acts .btn{flex:1 1 auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="mark">O</div><div><b>OPERELLE LOGISTICS</b><small>демо</small></div></div>
+  <h1>Логистика в одном окне</h1>
+  <p class="lead">Автоперевозки, авиа, ЖД и море. У каждого направления сайт клиента и панель управления. Всем управляет единая панель OPERELLE.</p>
+  <div class="card main"><b>Единая панель OPERELLE</b><p>Четыре направления в одном окне: заявки и парсер, экспедиторы, комиссии, доходы</p>
+    <div class="acts"><a class="btn g" href="all4.html">Открыть</a><button class="btn s" type="button" data-share="all4">Поделиться</button><button class="btn s" type="button" data-share="index">Поделиться всем сразу</button></div></div>
+  <h2>Направления</h2>
+  <div class="grid"><div class="card"><b>Автоперевозки</b><p>Bekzhan Logistic: расчёт и заявка, попутные грузы, перевозчики, карта рейсов</p><div class="acts"><a class="btn g" href="p-auto-site.html">Сайт клиента</a><a class="btn" href="p-auto-dash.html">Панель управления</a><button class="btn s" type="button" data-share="auto">Поделиться</button></div></div><div class="card"><b>Авиаперевозки</b><p>OPERELLE AIR: подбор рейса, цены экспедиторов, слежение по авианакладной</p><div class="acts"><a class="btn g" href="p-air-site.html">Сайт клиента</a><a class="btn" href="p-air-dash.html">Панель управления</a><button class="btn s" type="button" data-share="air">Поделиться</button></div></div><div class="card"><b>ЖД перевозки</b><p>Вагоны и контейнеры: расчёт по прейскурантам, заявки, отправки на карте сети</p><div class="acts"><a class="btn g" href="p-rail-site.html">Сайт клиента</a><a class="btn" href="p-rail-dash.html">Панель управления</a><button class="btn s" type="button" data-share="rail">Поделиться</button></div></div><div class="card"><b>Морские перевозки</b><p>OPERELLE SEA: 44 порта, контейнеры и паром, маршрут на карте мира</p><div class="acts"><a class="btn g" href="p-sea-site.html">Сайт клиента</a><a class="btn" href="p-sea-dash.html">Панель управления</a><button class="btn s" type="button" data-share="sea">Поделиться</button></div></div></div>
+  <p class="note">Внутри любой программы золотая кнопка у правого края экрана открывает переход между программами.</p>
+  <h2>Как пользоваться</h2>
+  <div class="card"><b>Инструкция</b><p>Как открыть на телефоне, как отправить ссылку людям, что показать за пять минут</p><div class="acts"><a class="btn" href="help.html">Открыть инструкцию</a></div></div>
+  <h2>Все материалы по отдельности</h2>
+  <div class="card" style="gap:0"><div class="fgroup"><h3>Всё вместе</h3><a href="materials/OPERELLE%20%D0%95%D0%B4%D0%B8%D0%BD%D0%B0%D1%8F%20%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%BA%D0%B0%2C%20%D0%B0%D0%B2%D1%82%D0%BE%20%D0%B0%D0%B2%D0%B8%D0%B0%20%D0%96%D0%94%20%D0%BC%D0%BE%D1%80%D0%B5.html">Единая админка: авто, авиа, ЖД, море</a><a href="materials/OPERELLE%20%D0%95%D0%B4%D0%B8%D0%BD%D0%B0%D1%8F%20%D0%B0%D0%B4%D0%BC%D0%B8%D0%BD%D0%BA%D0%B0%2C%20%D0%B0%D0%B2%D1%82%D0%BE%20%D0%B0%D0%B2%D0%B8%D0%B0%20%D0%96%D0%94.html">Единая админка: авто, авиа, ЖД</a><a href="materials/OPERELLE_Logisti%20%D0%B0%D0%B2%D1%82%D0%BE.html">Головная панель, только автоперевозки</a></div><div class="fgroup"><h3>Автоперевозки</h3><a href="materials/%D0%9B%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE/Auto%20%D0%B4%D0%BB%D1%8F%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D0%B8.html">Сайт и панель одним файлом</a><a href="materials/%D0%9B%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE/OPERELLE_Logistics_Client_Standalone.html">Сайт клиента</a><a href="materials/%D0%9B%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D1%8F%20%D0%B0%D0%B2%D1%82%D0%BE/OPERELLE_Logistics_Dashboard.html">Панель компании</a></div><div class="fgroup"><h3>Авиаперевозки</h3><a href="materials/%D0%90%D0%B2%D0%B8%D1%8F%20%D0%BB%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0/Air%20%D0%94%D0%BB%D1%8F%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D0%B8%20.html">Сайт и панель одним файлом</a><a href="materials/%D0%90%D0%B2%D0%B8%D1%8F%20%D0%BB%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0/OPERELLE_Air_Client.html">Сайт клиента</a><a href="materials/%D0%90%D0%B2%D0%B8%D1%8F%20%D0%BB%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0/OPERELLE_Air_Dashboard.html">Панель</a></div><div class="fgroup"><h3>ЖД перевозки</h3><a href="materials/%D0%96%D0%94%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B0/%D0%96%D0%94%20%D0%BB%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0%20%D0%B4%D0%BB%D1%8F%20%D0%BF%D1%80%D0%B5%D0%B7%D0%B5%D0%BD%D1%82%D0%B0%D1%86%D0%B8%D0%B8%20.html">Сайт и панель одним файлом</a><a href="materials/%D0%96%D0%94%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B0/OPERELLE_Logistics_Rail_Client.html">Сайт клиента</a><a href="materials/%D0%96%D0%94%20%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B0/OPERELLE_Logistics_Rail_Dashboard.html">Панель</a></div><div class="fgroup"><h3>Морские перевозки</h3><a href="materials/%D0%9C%D0%BE%D1%80%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BB%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0/OPERELLE_Sea.html">Сайт и панель одним файлом</a><a href="materials/%D0%9C%D0%BE%D1%80%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BB%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0/OPERELLE_Sea_Client.html">Сайт клиента</a><a href="materials/%D0%9C%D0%BE%D1%80%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BB%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0/OPERELLE_Sea_Dashboard.html">Панель</a></div><div class="fgroup"><h3>Справочное</h3><a href="materials/%D0%A1%D0%BC%D0%B5%D1%82%D0%B0%20OPERELLE%20Logistics.html">Смета OPERELLE</a><a href="materials/%D0%9B%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5%20%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D0%B8%2C%20%D1%87%D0%B5%D1%82%D1%8B%D1%80%D0%B5%20%D1%81%D1%82%D1%80%D0%B0%D0%BD%D1%8B.html">Логистические компании, четыре страны</a><a href="materials/%D0%9B%D0%BE%D0%B3%D0%B8%D1%81%D1%82%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B5%20%D0%BA%D0%BE%D0%BC%D0%BF%D0%B0%D0%BD%D0%B8%D0%B8%2C%20%D1%87%D0%B5%D1%82%D1%8B%D1%80%D0%B5%20%D1%81%D1%82%D1%80%D0%B0%D0%BD%D1%8B.csv">Тот же список таблицей CSV</a></div><p class="note">Единые файлы тяжёлые: их удобнее открывать на компьютере. На телефоне пользуйтесь кнопками выше.</p></div>
+  <p class="note" style="margin-top:26px">Демо. Компании, заявки, ставки и расписания показаны для примера. Данные хранятся в браузере устройства.</p>
+</div>
+<dialog id="dlg" aria-labelledby="dName">
+  <h3 id="dName"></h3><span class="url" id="dUrl"></span>
+  <img id="dQr" alt="QR-код ссылки" width="210" height="210">
+  <div class="acts">
+    <button class="btn g wide" type="button" id="dNative" hidden>Отправить…</button>
+    <a class="btn" id="dWa" target="_blank" rel="noopener">WhatsApp</a>
+    <a class="btn" id="dTg" target="_blank" rel="noopener">Telegram</a>
+    <button class="btn" type="button" id="dCopy">Скопировать ссылку</button>
+    <button class="btn" type="button" id="dClose">Закрыть</button>
+  </div>
+  <p id="copied" role="status"></p>
+</dialog>
+<script>
+/* кто вошёл через стартовую страницу, видит в списке перехода все программы */
+try{localStorage.setItem('operelleNavScope','all')}catch(e){}
+const SHARE={"index": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/", "name": "OPERELLE Logistics: все программы"}, "all4": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/all4.html", "name": "Единая панель OPERELLE"}, "auto": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-auto-site.html", "name": "Автоперевозки: сайт и панель"}, "air": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-air-site.html", "name": "Авиаперевозки: сайт и панель"}, "rail": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-rail-site.html", "name": "ЖД перевозки: сайт и панель"}, "sea": {"url": "https://janbekmadiev-commits.github.io/operelle-logistics/p-sea-site.html", "name": "Морские перевозки: сайт и панель"}};
+const dlg=document.getElementById('dlg'), $=id=>document.getElementById(id);
+let cur=null;
+function openShare(k){
+  cur=SHARE[k]; const text='OPERELLE Logistics, демо. '+cur.name;
+  $('dName').textContent=cur.name; $('dUrl').textContent=cur.url; $('dQr').src='qr/'+k+'.png'; $('copied').textContent='';
+  $('dWa').href='https://wa.me/?text='+encodeURIComponent(text+': '+cur.url);
+  $('dTg').href='https://t.me/share/url?url='+encodeURIComponent(cur.url)+'&text='+encodeURIComponent(text);
+  $('dNative').hidden=!navigator.share;
+  if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open','');
+}
+document.querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',()=>openShare(b.dataset.share)));
+$('dClose').addEventListener('click',()=>dlg.close?dlg.close():dlg.removeAttribute('open'));
+dlg.addEventListener('click',e=>{if(e.target===dlg&&dlg.close)dlg.close()});
+$('dNative').addEventListener('click',()=>{navigator.share({title:'OPERELLE Logistics',text:'OPERELLE Logistics, демо. '+cur.name,url:cur.url}).catch(()=>{})});
+$('dCopy').addEventListener('click',()=>{
+  const done=()=>{$('copied').textContent='Ссылка скопирована'};
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(cur.url).then(done).catch(sel); else sel();
+  function sel(){const r=document.createRange();r.selectNodeContents($('dUrl'));const s=getSelection();s.removeAllRanges();s.addRange(r);$('copied').textContent='Ссылка выделена: скопируйте её'}
+});
+</script>
+</body>
+</html>

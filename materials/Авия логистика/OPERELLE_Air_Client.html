@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#08090B">
+<title>OPERELLE AIR — авиаперевозки грузов в Казахстан</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@600;700;800&family=Fira+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<style>
+/* Стиль «Ночной рейс», как у сайта и панели автоперевозок: чёрный фон, один акцент (сигнальный оранжевый, переменная --gold).
+   Шрифты Fira Sans и Fira Sans Condensed содержат все казахские буквы. Цены и цифры: моноширинный шрифт. */
+:root{
+  --bg:#08090B;--bg-2:#0D0F12;--card:#111316;--card-2:#181B20;--line:#262A31;--text:#F2F3F5;--muted:#A7ADB8;--dim:#7A818D;
+  --gold:#FF6B1A;--gold-ink:#180900;--ok:#4ADE95;--green:#22C55E;--amber:#F59E0B;--red:#EF4444;
+  --r-card:10px;--r-field:8px;
+  --font:"Fira Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --cd:"Fira Sans Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{font:inherit;cursor:pointer;color:inherit;border:none;background:none}
+h1,h2,h3,p{margin:0}
+.wrap{width:min(1240px,92vw);margin:0 auto}
+section[id]{scroll-margin-top:76px}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;padding:14px 24px;font-weight:700;font-size:15px;border:1px solid transparent;white-space:nowrap;transition:transform .2s cubic-bezier(.16,1,.3,1),background .2s,border-color .2s}
+.btn:active{transform:scale(.98)}
+.btn-gold{background:var(--gold);color:var(--gold-ink)}
+.btn-gold:hover{background:#FF8440}
+.btn-line{background:transparent;border-color:#3A3F49;color:var(--text)}
+.btn-line:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{padding:10px 16px;font-size:14px}
+.btn-block{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* шапка */
+.top{position:fixed;inset:0 0 auto 0;z-index:30;height:64px;background:rgba(8,9,11,.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.1)}
+.top .wrap{height:100%;display:flex;align-items:center;gap:22px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.1em;font-size:14px}
+.brand .bn{display:flex;flex-direction:column;line-height:1.1;white-space:nowrap}
+.brand .bn small{font-size:9.5px;font-weight:600;letter-spacing:.34em;color:var(--muted);text-transform:lowercase;margin-top:3px}
+.nav{display:flex;gap:22px;margin-left:auto;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.nav a:hover{color:var(--gold)}
+.cab-btn .s{display:none}
+.burger{flex:0 0 40px;display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:9px;place-items:center}
+.mnav{position:fixed;top:64px;left:0;right:0;z-index:29;background:rgba(8,9,11,.97);border-bottom:1px solid var(--line);padding:6px 4vw 16px;display:grid}
+.mnav[hidden]{display:none}
+.mnav a{padding:14px 2px;font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+
+/* первый экран */
+.hero{position:relative;overflow:hidden;min-height:100dvh;padding:132px 0 48px;display:flex;align-items:center}
+.tick{position:absolute;left:0;right:0;top:64px;z-index:2;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(8,9,11,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:hidden;white-space:nowrap;padding:9px 0;font:500 12.5px var(--mono);color:#C9CED6}
+.tick div{display:inline-flex;animation:run 70s linear infinite}
+.tick span{padding:0 22px}
+.tick b{color:var(--gold);font-weight:500}
+.tick i,.quote .price i{font-style:normal}
+@keyframes run{to{transform:translateX(-50%)}}
+@keyframes blink{50%{opacity:.35}}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:44px;align-items:start}
+.hero-grid>div:first-child{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.live{display:inline-flex;align-items:center;gap:9px;margin-bottom:16px;font:500 12.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#FFC9A6}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(255,107,26,.22);animation:blink 1.6s ease-in-out infinite}
+.hero h1{font-family:var(--cd);font-size:clamp(44px,5.6vw,86px);line-height:.92;font-weight:800;text-transform:uppercase;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero .lead{font-size:20px;color:var(--muted);margin:18px 0 24px;max-width:28em}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+/* карта рейсов под заголовком: уходит к левому краю окна, по краям растворяется */
+.hero-map{align-self:stretch;margin:10px -70px 0 calc((100vw - min(1240px,92vw))/-2);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 86%,transparent 100%),linear-gradient(90deg,#000 0,#000 88%,transparent 100%);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(180deg,transparent 0,#000 16%,#000 86%,transparent 100%),linear-gradient(90deg,#000 0,#000 88%,transparent 100%);mask-composite:intersect}
+
+/* расчёт */
+.calc{position:relative;z-index:1;background:rgba(17,19,22,.92);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.5);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.tabs2{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--bg-2);padding:4px;border-radius:10px;margin-bottom:14px}
+.tabs2 button{padding:10px;border-radius:7px;font-weight:700;font-size:14px;color:var(--muted)}
+.tabs2 button.on{background:var(--card-2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.field{margin-bottom:10px;min-width:0}
+label{display:block;margin-bottom:5px;font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+label.check{display:flex;gap:10px;align-items:flex-start;font-family:var(--font);font-size:13.5px;letter-spacing:0;text-transform:none;color:var(--muted);cursor:pointer}
+label.check input{width:18px;height:18px;flex:0 0 18px;margin-top:2px;accent-color:var(--gold)}
+input,select,textarea{width:100%;padding:12px 13px;border-radius:var(--r-field);border:1px solid var(--line);background:var(--bg-2);color:var(--text);font:inherit;font-size:16px;outline:none}
+input::placeholder{color:#7A818D}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,107,26,.18)}
+.wbox{display:grid;gap:7px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-card);padding:12px;margin-bottom:10px}
+.wbox .cap{font:500 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.wrow{display:grid;grid-template-columns:86px minmax(0,1fr) 78px;gap:10px;align-items:center;font-size:13px;color:var(--dim)}
+.wrow i{display:block;height:10px;border-radius:10px;background:#20232A;overflow:hidden}
+.wrow i b{display:block;height:100%;border-radius:10px;background:#4A505B;transition:width .3s}
+.wrow>b{font:600 13.5px var(--mono);text-align:right;color:var(--muted)}
+.wrow.on{color:var(--text)} .wrow.on i b{background:var(--gold)} .wrow.on>b{color:var(--gold)}
+.quote{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r-card);padding:12px 14px;margin-bottom:12px}
+.quote-top{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;align-items:center}
+.quote-top b{display:block;font-size:15px}
+.quote-top small{display:block;color:var(--muted);font-size:12.5px}
+.quote .price{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.quote .price b{font:600 25px var(--mono);letter-spacing:-.04em;color:var(--gold)}
+.quote .price span{font-size:12.5px;color:var(--muted)}
+.hint{font-size:12px;color:var(--dim);margin-top:9px}
+
+/* разделы */
+.sec{padding:84px 0;border-top:1px solid rgba(255,255,255,.06)}
+.sec.alt{background:var(--bg-2)}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.sec h2{font:800 clamp(34px,4vw,58px)/.95 var(--cd);text-transform:uppercase;text-wrap:balance}
+.sec .sub{color:var(--muted);font-size:18px;margin-top:12px;max-width:34em}
+.sec-head{margin-bottom:36px}
+
+/* как это работает: линия полёта с пятью точками */
+.how{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px;padding-top:34px}
+.how::before{content:"";position:absolute;left:0;right:0;top:11px;border-top:2px dashed #3A3F49}
+.how-plane{position:absolute;top:0;left:0;width:24px;height:24px;color:var(--gold);animation:howfly 9s linear infinite}
+@keyframes howfly{from{left:0}to{left:calc(100% - 24px)}}
+.how-step{position:relative}
+.how-step::before{content:"";position:absolute;top:-29px;left:0;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--gold)}
+.how-step .n{font:600 13px var(--mono);color:var(--gold)}
+.how-step b{display:block;font:800 23px/1.05 var(--cd);text-transform:uppercase;margin:6px 0 6px}
+.how-step p{color:var(--muted);font-size:14.5px}
+
+/* чем летит груз */
+.planes{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plane-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:22px}
+.plane-card .ac-art{max-width:520px;margin:0 auto 14px}
+.plane-card h3{font:800 28px/1 var(--cd);text-transform:uppercase}
+.plane-card p{color:var(--muted);margin-top:8px}
+.facts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.fact{border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--muted)}
+.fact b{color:var(--text);font-family:var(--mono);font-weight:600}
+.caps{margin-top:14px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:22px}
+.caps h3{font:800 22px/1 var(--cd);text-transform:uppercase;margin-bottom:14px}
+.cap-row{display:grid;grid-template-columns:170px minmax(0,1fr) 70px;gap:14px;align-items:center;padding:7px 0;font-size:14px}
+.cap-row i{display:block;height:12px;border-radius:12px;background:#20232A;overflow:hidden}
+.cap-row i b{display:block;height:100%;border-radius:12px;background:var(--gold)}
+.cap-row.belly i b{background:#5B626E}
+.cap-row>b{font:600 14px var(--mono);text-align:right}
+.cap-row small{display:block;color:var(--dim);font-size:12px}
+
+/* за какой вес платят */
+.wgrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;align-items:center}
+.wdraw{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:18px}
+.wdraw svg{display:block;width:100%;height:auto}
+.wex{display:grid;gap:10px}
+.wex-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:14px 16px}
+.wex-row b{font-size:16px}
+.wex-row small{display:block;color:var(--muted);font-size:13.5px}
+.wex-row .res{text-align:right;font:600 20px var(--mono);letter-spacing:-.04em;color:var(--gold);white-space:nowrap}
+.wex-row .res small{font:400 12px var(--font);letter-spacing:0;color:var(--dim)}
+
+/* виды груза */
+.ctl{border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden;background:var(--card)}
+.ct-row{display:grid;grid-template-columns:56px minmax(0,1.1fr) minmax(0,1.5fr) auto;gap:16px;align-items:center;padding:14px 18px;border-top:1px solid var(--line)}
+.ct-row:first-child{border-top:none}
+.ct-row .ct-art{color:var(--gold)}
+.ct-row b{font:800 21px/1.05 var(--cd);text-transform:uppercase}
+.ct-row p{color:var(--muted);font-size:14.5px}
+.ct-how{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:600;white-space:nowrap;border:1px solid var(--line);color:var(--muted)}
+.chip.y{border-color:rgba(74,222,149,.4);color:#8FEFBF}
+.chip.n{color:var(--dim);text-decoration:line-through}
+
+/* направления */
+.dirs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dir{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:14px 16px;transition:border-color .2s}
+.dir:hover{border-color:var(--gold)}
+.dir b{font:800 22px/1.05 var(--cd);text-transform:uppercase}
+.dir b u{text-decoration:none;color:var(--gold)}
+.dir small{display:block;color:var(--muted);font-size:13px;margin-top:3px}
+.dir .p{text-align:right;font:600 18px var(--mono);letter-spacing:-.04em;color:var(--gold);white-space:nowrap}
+.dir .p small{font:400 12px var(--font);color:var(--dim);letter-spacing:0}
+
+/* отслеживание */
+.trk{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;max-width:640px}
+.trk input{font-family:var(--mono);font-size:18px;letter-spacing:.04em}
+.demo-awb{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center;font-size:13px;color:var(--dim)}
+.demo-awb button{font:500 13px var(--mono);border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--muted)}
+.demo-awb button:hover{border-color:var(--gold);color:var(--gold)}
+.trk-out{margin-top:22px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px}
+.trk-out[hidden]{display:none}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:16px;min-width:0}
+.panel h3{font:800 20px/1 var(--cd);text-transform:uppercase;margin-bottom:12px}
+.mapbox{background:#08090B;border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.kv:last-child{border-bottom:none}
+.kv span{color:var(--muted)}
+.kv b{font-weight:600;text-align:right;min-width:0;overflow-wrap:anywhere}
+.tline{display:flex;flex-direction:column}
+.tline .ev{position:relative;padding:0 0 12px 18px;border-left:2px solid var(--line);margin-left:5px;font-size:14px}
+.tline .ev:last-child{border-left-color:transparent;padding-bottom:0}
+.tline .ev::before{content:"";position:absolute;left:-6px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--green);border:2px solid var(--card)}
+.tline .ev.todo{color:var(--dim)} .tline .ev.todo::before{background:#2A2E36}
+.tline .ev small{display:block;color:var(--dim);font-size:12.5px}
+
+/* экспедиторам */
+.pgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+.ck-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line)}
+.ck-row:last-child{border-bottom:none}
+.ck-row i{flex:0 0 26px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px;background:rgba(74,222,149,.16);color:#8FEFBF}
+.ck-row b{display:block;font-size:16px}
+.ck-row small{color:var(--muted);font-size:14px}
+.cbs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.cbs button{border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13.5px;color:var(--muted)}
+.cbs button.on{border-color:var(--gold);color:var(--text);background:rgba(255,107,26,.12)}
+
+/* правила и подвал */
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rules .panel p{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14.5px;color:var(--muted)}
+.rules .panel p:last-child{border-bottom:none}
+.rules .panel p::before{content:"✓";color:#8FEFBF;font-weight:800}
+.rules .panel.no p::before{content:"✕";color:#FCA5A5}
+.foot{padding:34px 0 46px;border-top:1px solid rgba(255,255,255,.08);color:var(--dim);font-size:13.5px}
+.foot .wrap{display:flex;gap:20px;justify-content:space-between;flex-wrap:wrap}
+
+/* метки статусов и полоса этапов */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.b-green{background:rgba(34,197,94,.15);color:#6EE7A0}.b-blue{background:rgba(59,130,246,.16);color:#93B8FB}.b-amber{background:rgba(245,158,11,.15);color:#FBD38D}
+.b-red{background:rgba(239,68,68,.15);color:#FCA5A5}.b-violet{background:rgba(168,85,247,.16);color:#D8B4FE}.b-slate{background:rgba(100,116,139,.2);color:#B4C2D6}
+.b-cyan{background:rgba(6,182,212,.16);color:#7DD8E8}.b-gold{background:rgba(255,107,26,.16);color:#FFB184}
+.stage{display:flex;gap:4px;margin:10px 0 4px}
+.stage div{flex:1;min-width:0}
+.stage i{display:block;height:4px;border-radius:4px;background:#2A2E36}
+.stage .d i{background:var(--green)} .stage .c i{background:var(--gold)}
+.stage span{display:block;font-size:10.5px;color:var(--dim);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stage .c span{color:#FFB184;font-weight:700} .stage .d span{color:#7EE8AC}
+.stars{color:#F5C542;font-weight:700;white-space:nowrap}
+
+/* окна: заявка и кабинет */
+.ov{position:fixed;inset:0;z-index:60;background:rgba(4,6,10,.76);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:grid;place-items:center;padding:18px;animation:fade .18s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.dlg{width:min(560px,100%);max-height:92dvh;display:flex;flex-direction:column;background:var(--bg-2);border:1px solid var(--line);border-radius:16px;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.dlg.cab{width:min(1080px,100%);height:min(760px,92dvh)}
+.dlg-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+.dlg-head h3{font:800 24px/1 var(--cd);text-transform:uppercase;flex:1;min-width:0}
+.x{width:38px;height:38px;border:1px solid var(--line);border-radius:9px;display:grid;place-items:center;color:var(--muted);flex:0 0 38px}
+.x:hover{color:var(--text);border-color:#4A505B}
+.dlg-body{padding:18px;overflow-y:auto;min-width:0;flex:1}
+.dlg-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.cab-grid{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;height:100%}
+.cab-list{display:flex;flex-direction:column;gap:8px;overflow-y:auto;min-height:0}
+.cab-item{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:12px 13px}
+.cab-item.on{border-color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.cab-item b{display:block;font:800 19px/1.1 var(--cd);text-transform:uppercase;margin:5px 0 2px}
+.cab-item small{color:var(--muted);font-size:12.5px}
+.cab-no{font:500 12px var(--mono);color:var(--dim)}
+.cab-main{overflow-y:auto;min-height:0;min-width:0}
+.cab-back{display:none}
+.offer{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:14px;margin-bottom:10px}
+.offer.sel{border-color:var(--green);box-shadow:inset 0 0 0 1px var(--green)}
+.offer-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.offer-top .p{text-align:right;font:600 21px var(--mono);letter-spacing:-.04em;color:var(--gold);white-space:nowrap}
+.offer-top .p small{display:block;font:400 12px var(--font);color:var(--dim);letter-spacing:0}
+.offer small.m{display:block;color:var(--muted);font-size:13px}
+.wait{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:14px;margin-bottom:10px;color:var(--muted)}
+.spin{width:20px;height:20px;border-radius:50%;border:2.5px solid #3A3F49;border-top-color:var(--gold);animation:spin 1s linear infinite;flex:0 0 20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.opt{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:10px 12px;margin-bottom:8px}
+.opt.off{opacity:.6}
+.opt b{font-size:14.5px}
+.opt small{display:block;color:var(--muted);font-size:12.5px}
+.opt .no{color:#FCA5A5}
+.empty{padding:30px 10px;text-align:center;color:var(--dim)}
+.rate{display:flex;gap:4px}
+.rate button{font-size:30px;line-height:1;color:#3A3F49}
+.rate button.on{color:#F5C542}
+#toast-root{position:fixed;right:18px;bottom:18px;z-index:90;display:flex;flex-direction:column;gap:8px;max-width:360px}
+.toast{background:var(--card-2);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:10px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.5);font-size:14px}
+.toast.warn{border-left-color:var(--amber)} .toast.info{border-left-color:#3B82F6}
+
+/* планшет и телефон */
+@media (max-width:1080px){
+  .nav{display:none}
+  .burger{display:grid}
+  .top .wrap{gap:10px}
+  .top .fx-slot{margin-left:auto}
+  .hero{padding-top:124px;min-height:0}
+  .hero-grid{grid-template-columns:minmax(0,1fr);gap:22px}
+  .hero-map{margin:6px -4vw 0}
+  .how{grid-template-columns:minmax(0,1fr);gap:0;padding:0 0 0 30px}
+  .how::before{left:5px;right:auto;top:6px;bottom:6px;border-top:none;border-left:2px dashed #3A3F49}
+  .how-plane{display:none}
+  .how-step{padding-bottom:22px}
+  .how-step::before{top:5px;left:-30px}
+  .planes,.wgrid,.pgrid,.rules,.trk-out{grid-template-columns:minmax(0,1fr)}
+  .sec{padding:60px 0}
+}
+@media (max-width:700px){
+  .brand .bn{display:none}
+  .top .wrap{gap:8px}
+  .top .btn-sm{padding:9px 12px;font-size:13px}
+  .cab-btn .l{display:none}
+  .cab-btn .s{display:inline}
+  .hero .lead{font-size:17px}
+  .hero-cta .btn{flex:1 1 auto}
+  .calc{padding:14px}
+  .grid3{grid-template-columns:1fr 1fr 1fr;gap:8px}
+  .sec .sub{font-size:16px}
+  .sec-head{margin-bottom:24px}
+  .dirs{grid-template-columns:minmax(0,1fr)}
+  .dir b{font-size:19px}
+  .dir .p{font-size:16px}
+  .ct-row{grid-template-columns:44px minmax(0,1fr);gap:8px 12px;padding:14px}
+  .ct-row p,.ct-how{grid-column:2}
+  .ct-how{justify-content:flex-start}
+  .cap-row{grid-template-columns:118px minmax(0,1fr) 56px;gap:10px;font-size:13px}
+  .trk{grid-template-columns:minmax(0,1fr)}
+  .wex-row{grid-template-columns:minmax(0,1fr)}
+  .wex-row .res{text-align:left}
+  .ov{padding:0}
+  .dlg,.dlg.cab{width:100%;height:100dvh;max-height:100dvh;border-radius:0;border:none}
+  .cab-grid{grid-template-columns:minmax(0,1fr)}
+  .cab-grid.has .cab-list{display:none}
+  .cab-grid:not(.has) .cab-main{display:none}
+  .cab-back{display:inline-flex;margin-bottom:12px}
+  .dlg-foot .btn{flex:1 1 auto}
+  .stage span{font-size:9.5px}
+  #toast-root{left:12px;right:12px;bottom:12px;max-width:none}
+  .quote-top{grid-template-columns:92px minmax(0,1fr)}
+  .opt{grid-template-columns:86px minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" data-noi18n><span id="brandLogo"></span><span class="bn"><b>OPERELLE AIR</b><small>cargo</small></span></a>
+    <nav class="nav" aria-label="Разделы сайта">
+      <a href="#how">Как работает</a><a href="#planes">Самолёты</a><a href="#cargo">Грузы</a><a href="#routes">Направления</a><a href="#track">Отследить</a><a href="#partners">Экспедиторам</a>
+    </nav>
+    <div class="fx-slot" id="fxSlot"></div>
+    <button class="btn btn-line btn-sm cab-btn" type="button" onclick="openCab()"><span class="l">Мои заявки</span><span class="s">Заявки</span></button>
+    <button class="burger" type="button" aria-label="Меню" onclick="toggleNav()"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z"/></svg></button>
+  </div>
+</header>
+<nav class="mnav" id="mnav" hidden aria-label="Разделы сайта">
+  <a href="#calc" onclick="toggleNav()">Расчёт</a><a href="#how" onclick="toggleNav()">Как работает</a><a href="#planes" onclick="toggleNav()">Самолёты</a><a href="#cargo" onclick="toggleNav()">Грузы</a><a href="#routes" onclick="toggleNav()">Направления</a><a href="#track" onclick="toggleNav()">Отследить</a><a href="#partners" onclick="toggleNav()">Экспедиторам</a>
+</nav>
+
+<main>
+<section class="hero" id="top">
+  <div class="tick" id="tick" aria-hidden="true"></div>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="live"><i></i><span>Агенты ищут рейсы круглосуточно</span></div>
+      <h1 id="heroH" data-noi18n>Груз самолётом в <em>Казахстан</em></h1>
+      <p class="lead">Покажем рейсы. Соберём цены проверенных экспедиторов. Груз на карте до выдачи.</p>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="#calc">Рассчитать перевозку</a>
+        <a class="btn btn-line" href="#track">Отследить груз</a>
+      </div>
+      <div class="hero-map" id="heroMap"></div>
+    </div>
+    <aside class="calc" id="calc" aria-label="Расчёт перевозки">
+      <div class="tabs2" id="dirTabs">
+        <button type="button" data-imp="1">В Казахстан</button>
+        <button type="button" data-imp="0">Из Казахстана</button>
+      </div>
+      <div id="calcBody"></div>
+      <div id="calcOut"></div>
+      <button class="btn btn-gold btn-block" type="button" onclick="openOrder()">Получить цены экспедиторов</button>
+      <p class="hint">Цена на этой странице — ориентир. Точную цену и место на рейсе подтверждает экспедитор.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="sec alt" id="how">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Как это работает</p><h2>Пять шагов до выдачи груза</h2></div>
+    <div class="how">
+      <svg class="how-plane" viewBox="-12 -12 24 24" aria-hidden="true"><path d="M11 0L3 -1.5L-1 -8H-3.2L-1.4 -1.5L-7.4 -1.1L-9.4 -3.8H-10.8L-9.8 0L-10.8 3.8H-9.4L-7.4 1.1L-1.4 1.5L-3.2 8H-1L3 1.5Z" fill="currentColor"/></svg>
+      <div class="how-step"><span class="n">01</span><b>Заявка</b><p>Вес, размеры и вид груза. Две минуты.</p></div>
+      <div class="how-step"><span class="n">02</span><b>Рейсы</b><p>Показываем, какие авиакомпании возьмут ваш груз.</p></div>
+      <div class="how-step"><span class="n">03</span><b>Цены</b><p>Проверенные экспедиторы отвечают ценой и сроком.</p></div>
+      <div class="how-step"><span class="n">04</span><b>Выбор</b><p>Вы выбираете предложение, и открываются контакты.</p></div>
+      <div class="how-step"><span class="n">05</span><b>Груз на карте</b><p>Статусы по номеру авианакладной до выдачи.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="planes">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Чем летит груз</p><h2>Два вида рейсов</h2><p class="sub">Оранжевым показано, где лежит груз.</p></div>
+    <div class="planes">
+      <div class="plane-card"><div id="artBelly"></div><h3>Пассажирский рейс</h3><p>Груз летит в нижнем отсеке под салоном. Рейсы чаще, цена ниже.</p>
+        <div class="facts"><span class="fact">на рейс до <b>2,5 т</b></span><span class="fact">место до <b>150 кг</b></span><span class="fact">длина до <b>150 см</b></span></div></div>
+      <div class="plane-card"><div id="artFr"></div><h3>Грузовой самолёт</h3><p>Груз занимает весь самолёт. Берёт тяжёлое, длинное и опасное.</p>
+        <div class="facts"><span class="fact">на рейс до <b>134 т</b></span><span class="fact">место до <b>5 т</b></span><span class="fact">опасные грузы</span></div></div>
+    </div>
+    <div class="caps"><h3>Сколько берёт один рейс</h3><div id="caps"></div></div>
+  </div>
+</section>
+
+<section class="sec alt" id="weight">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">За какой вес платят</p><h2>Вес или объём: берут больший</h2><p class="sub">Лёгкий, но большой груз считают по объёму. Один кубометр равен 167 кг.</p></div>
+    <div class="wgrid">
+      <div class="wdraw">
+        <svg viewBox="0 0 420 250" role="img" aria-label="Коробка с размерами и весы">
+          <g fill="none" stroke="#5B626E" stroke-width="2" stroke-linejoin="round"><path d="M40 88l110-44 110 44v104l-110 44-110-44z" fill="#191C21"/><path d="M40 88l110 44 110-44M150 132v104"/></g>
+          <g stroke="#FF6B1A" stroke-width="2" fill="none"><path d="M40 208l110 44M28 96v104M160 252l100-40"/></g>
+          <g font-family="JetBrains Mono,monospace" font-size="15" fill="#FF6B1A" font-weight="600"><text x="62" y="246">60</text><text x="4" y="152">40</text><text x="218" y="246">40</text></g>
+          <g font-family="JetBrains Mono,monospace" font-size="12" fill="#7A818D"><text x="88" y="246">см</text><text x="4" y="168">см</text><text x="244" y="246">см</text></g>
+          <path d="M300 172h100v14H300z" fill="#22262D" stroke="#5B626E" stroke-width="2"/><path d="M318 172v-22h64v22" fill="none" stroke="#5B626E" stroke-width="2"/>
+          <text x="350" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="22" font-weight="600" fill="#F2F3F5">10</text><text x="350" y="204" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#7A818D">кг</text><text x="300" y="228" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1.2" fill="#7A818D">ПО ВЕСАМ</text>
+          <text x="300" y="34" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1.2" fill="#7A818D">ПО ОБЪЁМУ</text><text x="300" y="60" font-family="JetBrains Mono,monospace" font-size="13" fill="#A7ADB8">60 × 40 × 40</text><text x="300" y="80" font-family="JetBrains Mono,monospace" font-size="13" fill="#A7ADB8">÷ 6000 =</text><text x="300" y="108" font-family="JetBrains Mono,monospace" font-size="24" font-weight="600" fill="#FF6B1A">16</text><text x="336" y="108" font-family="JetBrains Mono,monospace" font-size="13" fill="#7A818D">кг</text>
+        </svg>
+      </div>
+      <div class="wex" id="wex"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="cargo">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Что возим</p><h2>Семь видов груза</h2></div>
+    <div class="ctl" id="ctl"></div>
+  </div>
+</section>
+
+<section class="sec alt" id="routes">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Направления</p><h2>Откуда везём чаще всего</h2><p class="sub">Цена за килограмм для партии в 100 кг. Нажмите, чтобы посчитать свой груз.</p></div>
+    <div class="dirs" id="dirs"></div>
+  </div>
+</section>
+
+<section class="sec" id="track">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Где мой груз</p><h2>Отследить по авианакладной</h2><p class="sub">Номер из 11 цифр даёт экспедитор после брони рейса.</p></div>
+    <div class="trk"><input id="awbIn" inputmode="numeric" autocomplete="off" placeholder="465-14716995" aria-label="Номер авианакладной"><button class="btn btn-gold" type="button" onclick="trackFind()">Найти груз</button></div>
+    <div class="demo-awb" id="demoAwb"></div>
+    <div class="trk-out" id="trkOut" hidden></div>
+  </div>
+</section>
+
+<section class="sec alt" id="partners">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Экспедиторам</p><h2>Получайте заявки на авиаперевозку</h2><p class="sub">Заявки приходят уже с весом, размерами и подходящими рейсами. Вы отвечаете ценой.</p></div>
+    <div class="pgrid">
+      <div class="panel"><h3>Что мы проверяем</h3><div id="checks"></div></div>
+      <form class="panel" id="pForm" onsubmit="return submitPartner(event)">
+        <h3>Заявка на подключение</h3>
+        <div class="field"><label for="pName">Компания</label><input id="pName" required maxlength="80" placeholder="ТОО «Название»"></div>
+        <div class="grid2"><div class="field"><label for="pCity">Город</label><input id="pCity" required maxlength="40" placeholder="Алматы"></div><div class="field"><label for="pPhone">Телефон</label><input id="pPhone" required type="tel" maxlength="24" placeholder="+7 700 000 00 00"></div></div>
+        <div class="field"><label for="pPerson">Кто отвечает на заявки</label><input id="pPerson" required maxlength="60" placeholder="Имя и фамилия"></div>
+        <label>Откуда возите</label><div class="cbs" id="pDirs"></div>
+        <label class="check"><input type="checkbox" id="pIata"><span>Есть аккредитация IATA или договор с авиакомпанией</span></label>
+        <button class="btn btn-gold btn-block" type="submit" style="margin-top:14px">Отправить на проверку</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="rules">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Правила площадки</p><h2>Мы сводим стороны</h2><p class="sub">Перевозит авиакомпания, бронирует и отвечает за груз экспедитор.</p></div>
+    <div class="rules">
+      <div class="panel"><h3>Что делает площадка</h3><p>Считает оплачиваемый вес и ориентир цены</p><p>Показывает рейсы, которые возьмут ваш груз</p><p>Собирает цены проверенных экспедиторов</p><p>Показывает статусы груза по авианакладной</p></div>
+      <div class="panel no"><h3>Чего площадка не делает</h3><p>Не принимает деньги за перевозку: вы платите экспедитору</p><p>Не бронирует рейс и не выдаёт авианакладную</p><p>Не отвечает за груз: отвечают экспедитор и авиакомпания</p><p>Не гарантирует цену и место: их подтверждает экспедитор</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot"><div class="wrap"><span data-noi18n>OPERELLE AIR · cargo</span><span>Пробная версия. Расписания, цены и компании-экспедиторы на сайте демонстрационные.</span></div></footer>
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+<script>
+
+/* ============================================================
+   ВАЛЮТЫ (общий блок трёх программ)
+   Это не обмен валют. Все суммы считаются и хранятся в тенге, а показываются в валюте,
+   которую человек выбрал вверху страницы: крупно в валюте, ниже мелко в тенге.
+   Выбор хранится в браузере и действует сразу в головной панели, панели компании и на сайте.
+   Курсы демо: ориентир к тенге; в боевой версии загружаются раз в день с сайта Нацбанка РК,
+   головная панель OPERELLE может поправить их вручную (ключ operelleFx).
+   ============================================================ */
+const fxLS=(k,d)=>{let v=null;try{v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return typeof d==='string'&&typeof v==='string'&&v?v:d}};
+const fxSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+/* код, знак, знак перед числом, название, страны, курс к тенге за 1 единицу */
+const FX_LIST=[
+ ['KZT','₸',0,'Казахстанский тенге','Казахстан',1],
+ ['USD','$',1,'Доллар США','США, международные расчёты',520],
+ ['EUR','€',1,'Евро','Евросоюз',600],
+ ['RUB','₽',0,'Российский рубль','Россия',6.4],
+ ['CNY','¥',0,'Китайский юань','Китай',73],
+ ['UZS','сўм',0,'Узбекский сум','Узбекистан',0.041],
+ ['KGS','сом',0,'Кыргызский сом','Кыргызстан',5.95],
+ ['TJS','смн',0,'Таджикский сомони','Таджикистан',48],
+ ['TMT','TMT',0,'Туркменский манат','Туркменистан',148],
+ ['AZN','₼',0,'Азербайджанский манат','Азербайджан',306],
+ ['GEL','₾',0,'Грузинский лари','Грузия',190],
+ ['AMD','֏',0,'Армянский драм','Армения',1.34],
+ ['BYN','Br',0,'Белорусский рубль','Беларусь',160],
+ ['TRY','₺',0,'Турецкая лира','Турция',12.5],
+ ['MNT','₮',0,'Монгольский тугрик','Монголия',0.15],
+ ['AED','AED',0,'Дирхам ОАЭ','ОАЭ',141.6],
+ ['GBP','£',1,'Фунт стерлингов','Великобритания',690],
+ ['PLN','zł',0,'Польский злотый','Польша, транзит в ЕС',140],
+ ['KRW','₩',0,'Южнокорейская вона','Южная Корея',0.37],
+ ['INR','₹',0,'Индийская рупия','Индия',6]
+];
+const FX=code=>FX_LIST.find(x=>x[0]===code)||FX_LIST[0];
+/* знак валюты: кириллические знаки (сўм, сом, смн) на английском и китайском заменяются кодом */
+const fxSym=c=>(typeof LANG!=='undefined'&&(LANG==='en'||LANG==='zh')&&/[а-яёў]/i.test(c[1]))?c[0]:c[1];
+const fxRates=()=>{const o={};FX_LIST.forEach(x=>o[x[0]]=x[5]);return Object.assign(o,fxLS('operelleFx',{}))};
+let CUR=fxLS('operelleCur','KZT'); if(!FX_LIST.some(x=>x[0]===CUR)) CUR='KZT';
+const kzt=n=>Math.round(n).toLocaleString('ru-RU')+' ₸';
+const FX_WORD={ru:['тыс','млн'],kk:['мың','млн'],en:['K','M'],zh:['千','百万']};
+const fxWord=i=>(FX_WORD[typeof LANG!=='undefined'?LANG:'ru']||FX_WORD.ru)[i];
+/* число в валюте: крупные суммы без копеек, мелкие с двумя знаками, совсем мелкие с тремя */
+const fxLoc=()=>(typeof LANG!=='undefined'&&(LANG==='en'||LANG==='zh'))?'en-US':'ru-RU';
+const fxDec=s=>fxLoc()==='en-US'?s:s.replace('.',',');
+function fxNum(v){
+  const a=Math.abs(v), d=a>=100?0:a>=1?2:3;
+  return v.toLocaleString(fxLoc(),{minimumFractionDigits:0,maximumFractionDigits:d});
+}
+/* единица после суммы на языке страницы: /км, /т, /ч */
+const FX_UNIT={kk:{'км':'км','т':'т','м³':'м³','ч':'сағ','час':'сағ','сут':'тәул','мес':'ай','рейс':'рейс','место':'орын'},
+  en:{'км':'km','т':'t','м³':'m³','ч':'h','час':'h','сут':'day','мес':'mo','рейс':'trip','место':'slot'},
+  zh:{'км':'公里','т':'吨','м³':'立方米','ч':'小时','час':'小时','сут':'天','мес':'月','рейс':'趟','место':'个'}};
+const fxUnit=u=>{if(!u)return '';const m=FX_UNIT[typeof LANG!=='undefined'?LANG:'ru'];const k=u.slice(1);return '/'+(m&&m[k]||k)};
+function fxPlain(n,code){
+  const c=FX(code||CUR), v=n/(fxRates()[c[0]]||1);
+  const y=fxSym(c); return c[2]?y+fxNum(v):fxNum(v)+' '+y;
+}
+/* сумма для страницы: в тенге как раньше; в другой валюте крупно валюта, мелко тенге */
+function fxMoney(n,u){
+  u=fxUnit(u);
+  if(CUR==='KZT') return kzt(n)+u;
+  return '<span class="fx"><b>'+fxPlain(n)+u+'</b><small>'+kzt(n)+u+'</small></span>';
+}
+function fxMln(n){
+  const tenge=(CUR==='KZT'?(n/1e6).toFixed(n>=1e7?1:2).replace('.',','):fxDec((n/1e6).toFixed(n>=1e7?1:2)))+' '+fxWord(1)+' ₸';
+  if(CUR==='KZT') return tenge;
+  const c=FX(CUR), v=n/(fxRates()[c[0]]||1), a=Math.abs(v);
+  const s=a>=1e6?fxDec((v/1e6).toFixed(a>=1e7?1:2))+' '+fxWord(1):a>=1e4?fxDec((v/1e3).toFixed(1))+' '+fxWord(0):fxNum(v);
+  const y=fxSym(c); return '<span class="fx"><b>'+(c[2]?y+s:s+' '+y)+'</b><small>'+tenge+'</small></span>';
+}
+/* суммы внутри готового текста: «от 3 000 ₸», «29 000 ₸ в месяц», «от 170 ₸/км» (единица остаётся при обеих суммах) */
+function fxStr(s){
+  if(CUR==='KZT'||!s) return s;
+  return String(s).replace(/(\d+(?:[   ]\d{3})*(?:,\d+)?)[  ]?(млн[  ])?₸(\/(?:км|т|м³|ч|час|сут|мес|рейс|место))?/g,(m,a,ml,u)=>{
+    const n=parseFloat(a.replace(/[   ]/g,'').replace(',','.'))*(ml?1e6:1);
+    return isFinite(n)?fxMoney(n,u):m});
+}
+/* та же сумма одной строкой, где разметка не допускается: всплывающие подсказки, поля, обычный текст */
+const fxText=s=>String(s).replace(/<span class="fx"><b>([^<]*)<\/b><small>([^<]*)<\/small><\/span>/g,'$1 ($2)').replace(/<[^>]+>/g,'');
+function setCur(code){
+  if(!FX_LIST.some(x=>x[0]===code)) return;
+  CUR=code; fxSet('operelleCur',code);
+  if(typeof onCurChange==='function') onCurChange();
+  fxRefresh();
+}
+/* переключатели валюты и языка для верхней панели: кнопка с кодом и раскрывающийся список; part: 'cur', 'lang' или оба */
+function fxSelHTML(langs,part){
+  const L=langs||['ru','kk','en','zh'], lg=typeof LANG!=='undefined'?LANG:'ru';
+  const cur='<div class="fxs fxs-cur"><button type="button" class="fxs-btn" onclick="fxToggle(this)" aria-haspopup="listbox" aria-label="Валюта" title="Суммы показываются в этой валюте, ниже мелко в тенге"><span class="fxs-ic">'+FX(CUR)[1]+'</span>'+CUR+'</button>'+
+    '<div class="fxs-menu" role="listbox">'+FX_LIST.map(x=>'<button type="button" role="option" class="'+(x[0]===CUR?'on':'')+'" onclick="setCur(\''+x[0]+'\')"><b>'+x[0]+'</b><span>'+x[3]+'</span><i>'+x[1]+'</i></button>').join('')+'</div></div>';
+  const lang='<div class="fxs fxs-lang"><button type="button" class="fxs-btn" onclick="fxToggle(this)" aria-haspopup="listbox" aria-label="Язык">'+LANG_NAMES[L.includes(lg)?lg:L[0]][0]+'</button>'+
+    '<div class="fxs-menu" role="listbox">'+L.map(k=>'<button type="button" role="option" class="'+(k===lg?'on':'')+'" onclick="setLang(\''+k+'\')"><b>'+LANG_NAMES[k][0]+'</b><span>'+LANG_NAMES[k][1]+'</span></button>').join('')+'</div></div>';
+  return '<div class="fxsel" data-noi18n>'+(part!=='lang'?cur:'')+(part!=='cur'?lang:'')+'</div>';
+}
+/* места для переключателей: <div class="fx-slot" data-part="cur" data-langs="ru,kk,en"></div> */
+function fxRefresh(){if(typeof document==='undefined'||!document.querySelectorAll)return;document.querySelectorAll('.fx-slot').forEach(el=>{el.innerHTML=fxSelHTML(el.dataset.langs?el.dataset.langs.split(','):null,el.dataset.part)})}
+function fxToggle(b){const w=b.parentNode,o=w.classList.contains('open');document.querySelectorAll('.fxs.open').forEach(x=>x.classList.remove('open'));if(!o)w.classList.add('open')}
+if(typeof document!=='undefined'&&document.addEventListener) document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('.fxs')))document.querySelectorAll('.fxs.open').forEach(x=>x.classList.remove('open'))});
+const LANG_NAMES={ru:['RU','Русский'],kk:['KZ','Қазақша'],en:['EN','English'],zh:['ZH','中文']};
+const FX_CSS='.fx{display:inline-flex;flex-direction:column;line-height:1.1;vertical-align:middle;max-width:100%}.fx b{font-weight:inherit;white-space:nowrap}'+
+  '.fx small{display:block;font-size:.64em;font-weight:500;opacity:.62;letter-spacing:0;white-space:nowrap;font-family:inherit}'+
+  '.tick .fx,p .fx,li .fx,.mini .fx,.toast .fx,.hint .fx,.why .fx,.lead2 .fx,.note-row .fx,.notice .fx,.sub .fx,.ins-sum .fx,.src-tag .fx,.log .fx{display:inline;line-height:inherit}'+
+  '.tick .fx small,p .fx small,li .fx small,.mini .fx small,.toast .fx small,.hint .fx small,.why .fx small,.lead2 .fx small,.note-row .fx small,.notice .fx small,.sub .fx small,.ins-sum .fx small,.src-tag .fx small,.log .fx small{display:inline;font-size:.86em}'+
+  '.tick .fx small::before,p .fx small::before,li .fx small::before,.mini .fx small::before,.toast .fx small::before,.hint .fx small::before,.why .fx small::before,.lead2 .fx small::before,.note-row .fx small::before,.notice .fx small::before,.sub .fx small::before,.ins-sum .fx small::before,.src-tag .fx small::before,.log .fx small::before{content:" ("}'+
+  '.tick .fx small::after,p .fx small::after,li .fx small::after,.mini .fx small::after,.toast .fx small::after,.hint .fx small::after,.why .fx small::after,.lead2 .fx small::after,.note-row .fx small::after,.notice .fx small::after,.sub .fx small::after,.ins-sum .fx small::after,.src-tag .fx small::after,.log .fx small::after{content:")"}'+
+  '.fxsel{display:flex;gap:6px;align-items:center}.fxs{position:relative}'+
+  '.fxs-btn{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 24px 0 10px;border-radius:8px;border:1px solid var(--line,#2A2E36);background:rgba(255,255,255,.04);color:inherit;font:700 13px/1 var(--mono,ui-monospace,Menlo,monospace);cursor:pointer;position:relative;white-space:nowrap}'+
+  '.fxs-btn::after{content:"";position:absolute;right:9px;top:50%;width:6px;height:6px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:translateY(-70%) rotate(45deg);opacity:.6}'+
+  '.fxs-btn:hover{border-color:var(--gold,#FF6B1A)}.fxs-ic{color:var(--gold,#FF6B1A);font-weight:800;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif}'+
+  '.fxs-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);z-index:300;min-width:250px;max-height:min(360px,70vh);overflow-y:auto;background:#111316;border:1px solid #2A2E36;border-radius:10px;padding:5px;box-shadow:0 20px 50px rgba(0,0,0,.55)}'+
+  '.fxs.open .fxs-menu{display:block}.fxs-menu button{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;text-align:left;padding:8px 10px;border-radius:7px;border:none;background:none;color:#F2F3F5;font:500 13.5px/1.2 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;cursor:pointer}'+
+  '.fxs-lang .fxs-menu{min-width:170px}.fxs-menu button:hover{background:rgba(255,255,255,.06)}.fxs-menu button.on{background:rgba(255,255,255,.08)}'+
+  '.fxs-menu b{font:700 12.5px var(--mono,ui-monospace,Menlo,monospace);color:var(--gold,#FF6B1A)}.fxs-menu span{color:#C9CED6}.fxs-menu i{font-style:normal;color:#8F96A3}';
+(function(){if(typeof document==='undefined'||!document.head||!document.createElement)return;try{const st=document.createElement('style');st.textContent=FX_CSS;document.head.appendChild(st)}catch(e){}})();
+
+/* ============================================================
+   ЯЗЫКИ (общий блок трёх программ)
+   Страница строится на русском, а перевод подставляется в готовый текст по словарю I18N_DICT:
+   целая фраза, фраза с числами по шаблону {n}, или по частям (« · », « → », «, »).
+   Города и страны переводятся отдельным списком. Суммы, номера, даты и имена не меняются.
+   Новые узлы переводятся сами (наблюдатель за страницей), поэтому окна, списки и уведомления
+   тоже выходят на выбранном языке. Чтобы добавить язык, достаточно добавить колонку в словарь.
+   ============================================================ */
+const I18N_COL={kk:0,en:1,zh:2};
+let LANG=fxLS('operelleLang','ru'); if(!LANG_NAMES[LANG]) LANG='ru';
+const I18N_LANGS_HQ=['ru','kk','en'];
+/* города: казахские названия, английская транслитерация, китайские названия крупных городов */
+const CITY_I18N={'Алматы':['Алматы','Almaty','阿拉木图'],'Астана':['Астана','Astana','阿斯塔纳'],'Шымкент':['Шымкент','Shymkent','奇姆肯特'],'Караганда':['Қарағанды','Karaganda','卡拉干达'],
+ 'Актобе':['Ақтөбе','Aktobe','阿克托别'],'Атырау':['Атырау','Atyrau','阿特劳'],'Актау':['Ақтау','Aktau','阿克套'],'Павлодар':['Павлодар','Pavlodar','巴甫洛达尔'],'Усть-Каменогорск':['Өскемен','Oskemen','厄斯克门'],
+ 'Семей':['Семей','Semey','塞米伊'],'Костанай':['Қостанай','Kostanay','科斯塔奈'],'Тараз':['Тараз','Taraz','塔拉兹'],'Кызылорда':['Қызылорда','Kyzylorda','克孜勒奥尔达'],'Уральск':['Орал','Oral','乌拉尔斯克'],
+ 'Петропавловск':['Петропавл','Petropavl','彼得罗巴甫尔'],'Туркестан':['Түркістан','Turkistan','突厥斯坦'],'Талдыкорган':['Талдықорған','Taldykorgan','塔尔迪库尔干'],'Жезказган':['Жезқазған','Zhezkazgan','杰兹卡兹甘'],
+ 'Хоргос':['Қорғас','Khorgos','霍尔果斯'],'Кокшетау':['Көкшетау','Kokshetau','科克舍套'],'Экибастуз':['Екібастұз','Ekibastuz','埃基巴斯图兹'],'Балхаш':['Балқаш','Balkhash','巴尔喀什'],'Темиртау':['Теміртау','Temirtau','铁米尔套'],
+ 'Урумчи':['Үрімжі','Urumqi','乌鲁木齐'],'Ташкент':['Ташкент','Tashkent','塔什干'],'Бишкек':['Бішкек','Bishkek','比什凯克'],'Москва':['Мәскеу','Moscow','莫斯科'],'Новосибирск':['Новосібір','Novosibirsk','新西伯利亚'],
+ 'Омск':['Омбы','Omsk','鄂木斯克'],'Самара':['Самара','Samara','萨马拉'],'Екатеринбург':['Екатеринбург','Yekaterinburg','叶卡捷琳堡'],'Челябинск':['Челябі','Chelyabinsk','车里雅宾斯克'],'Оренбург':['Орынбор','Orenburg','奥伦堡'],
+ 'Астрахань':['Астрахан','Astrakhan','阿斯特拉罕'],'Гуанчжоу':['Гуанчжоу','Guangzhou','广州'],'Стамбул':['Стамбул','Istanbul','伊斯坦布尔'],'Минск':['Минск','Minsk','明斯克'],'Баку':['Баку','Baku','巴库'],
+ 'Тбилиси':['Тбилиси','Tbilisi','第比利斯'],'Душанбе':['Душанбе','Dushanbe','杜尚别'],'Самарканд':['Самарқанд','Samarkand','撒马尔罕'],'Ош':['Ош','Osh','奥什'],'Пекин':['Бейжің','Beijing','北京'],
+ 'Шанхай':['Шанхай','Shanghai','上海'],'Иу':['Иу','Yiwu','义乌'],'Достык':['Достық','Dostyk','多斯特克'],'Алашанькоу':['Алашанькоу','Alashankou','阿拉山口'],'Кашгар':['Қашқар','Kashgar','喀什'],
+ 'Санкт-Петербург':['Санкт-Петербург','Saint Petersburg','圣彼得堡'],'Казахстан':['Қазақстан','Kazakhstan','哈萨克斯坦'],'Россия':['Ресей','Russia','俄罗斯'],'Китай':['Қытай','China','中国'],'Узбекистан':['Өзбекстан','Uzbekistan','乌兹别克斯坦'],
+ 'Кыргызстан':['Қырғызстан','Kyrgyzstan','吉尔吉斯斯坦'],'Таджикистан':['Тәжікстан','Tajikistan','塔吉克斯坦'],'Туркменистан':['Түрікменстан','Turkmenistan','土库曼斯坦'],'Азербайджан':['Әзербайжан','Azerbaijan','阿塞拜疆'],
+ 'Грузия':['Грузия','Georgia','格鲁吉亚'],'Армения':['Армения','Armenia','亚美尼亚'],'Турция':['Түркия','Turkey','土耳其'],'Иран':['Иран','Iran','伊朗'],'Афганистан':['Ауғанстан','Afghanistan','阿富汗'],'Беларусь':['Беларусь','Belarus','白俄罗斯'],
+ 'по Казахстану':['Қазақстан бойынша','within Kazakhstan','哈萨克斯坦境内']};
+const TRL={а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'yo',ж:'zh',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'kh',ц:'ts',ч:'ch',ш:'sh',щ:'shch',ъ:'',ы:'y',ь:'',э:'e',ю:'yu',я:'ya',
+  ә:'a',ғ:'g',қ:'q',ң:'n',ө:'o',ұ:'u',ү:'u',һ:'h',і:'i'};
+const translit=s=>s.split('').map(ch=>{const l=ch.toLowerCase(),t=TRL[l];if(t==null)return ch;return ch===l?t:t.charAt(0).toUpperCase()+t.slice(1)}).join('');
+/* все названия городов из справочника: если нет в списке, английский и китайский получают транслитерацию */
+function cityTr(name){
+  const c=CITY_I18N[name]; if(c) return c[I18N_COL[LANG]];
+  if(typeof CITY!=='undefined'&&!cityTr._set){cityTr._set=new Set(Object.keys(CITY).map(k=>CITY[k][0]))}
+  if(cityTr._set&&cityTr._set.has(name)) return LANG==='kk'?name:translit(name);
+  return null;
+}
+const NUM_RE=/\d+(?:[   ]\d{3})*(?:[.,]\d+)?/g;
+function trLookup(t){
+  t=t.replace(/[\u00a0\u202f]/g,' ');
+  const D=typeof I18N_DICT!=='undefined'?I18N_DICT:{}, col=I18N_COL[LANG];
+  let r=D[t]; if(r&&r[col]&&(r[col]!==t||LANG==='kk')) return r[col];
+  const c=cityTr(t); if(c) return c;
+  if(/\d/.test(t)){const nums=[];const k=t.replace(NUM_RE,m=>{nums.push(m);return '{n}'});r=D[k];if(r&&r[col]){let i=0;const x=r[col].replace(/\{n\}/g,()=>nums[i++]||'');if(x!==t||LANG==='kk')return x}}
+  /* шаблон с городами и странами: «По пути {c} → {c} есть попутные грузы: {n}» */
+  const cre=cityRe();
+  if(cre){const cs=[],nums=[];let k=t.replace(cre,(m,pre,name)=>{cs.push(name);return pre+'{c}'});
+    if(cs.length){k=k.replace(NUM_RE,m=>{nums.push(m);return '{n}'});r=D[k];
+      if(r&&r[col]){let i=0,j=0;return r[col].replace(/\{n\}/g,()=>nums[i++]||'').replace(/\{c\}/g,()=>cityAny(cs[j++]||''))}}}
+  return trRule(t,col,D[t]);
+}
+/* все названия городов и стран одним выражением: длинные раньше коротких */
+function cityRe(){
+  if(cityRe._r!==undefined) return cityRe._r;
+  if(typeof CITY==='undefined') return null;
+  const names=[...new Set(Object.keys(CITY).map(k=>CITY[k][0]).concat(typeof COUNTRY!=='undefined'?Object.keys(COUNTRY).map(k=>COUNTRY[k]):[]))].filter(n=>n.length>1).sort((a,b)=>b.length-a.length)
+    .map(n=>n.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  return cityRe._r=new RegExp('(^|[^А-Яа-яЁёA-Za-z])('+names.join('|')+')(?![А-Яа-яЁё])','g');
+}
+/* правила для строк из данных: место на трассе, город, форма компании, имя человека */
+const cityAny=n=>cityTr(n)||(LANG==='kk'?n:translit(n));
+const CO_FORM={'ТОО':['ЖШС','LLP','LLP'],'АО':['АҚ','JSC','JSC'],'ИП':['ЖК','IE','IE'],'ООО':['ЖШҚ','LLC','LLC'],'ОсОО':['ЖШҚ','LLC','LLC']};
+function trRule(t,col,r){
+  let g=t.match(/^(\d+) км от г\. ([^,]+?)(?: в сторону г\. (.+))?$/);
+  if(g){const a=cityAny(g[2]),b=g[3]?cityAny(g[3]):'';
+    return LANG==='en'?g[1]+' km from '+a+(b?' towards '+b:''):LANG==='zh'?'距'+a+' '+g[1]+' 公里'+(b?'，往'+b+'方向':''):a+' қаласынан '+g[1]+' км'+(b?', '+b+' бағытында':'');}
+  g=t.match(/^Здравствуйте, ([А-ЯЁ][а-яё]+)! (.+)$/); if(g){const nm=LANG==='kk'?g[1]:translit(g[1]),rest=trText(g[2])||g[2]; return ({kk:'Сәлеметсіз бе, ',en:'Hello, ',zh:'您好，'}[LANG])+nm+(LANG==='zh'?'！':'! ')+rest;}
+  g=t.match(/^отвечает ([А-ЯЁ][а-яё]+(?: [А-ЯЁ][а-яё]+)*)$/); if(g) return ({kk:'жауапты: ',en:'responsible: ',zh:'负责人：'}[LANG])+(LANG==='kk'?g[1]:translit(g[1]));
+  g=t.match(/^([А-ЯЁ][а-яё]+ [А-ЯЁ][а-яё]+), (владелец|директор|логист)$/); if(g) return (LANG==='kk'?g[1]:translit(g[1]))+', '+({владелец:['иесі','owner','车主'],директор:['директор','director','负责人'],логист:['логист','logistician','物流专员']}[g[2]][col]);
+  g=t.match(/^Здравствуйте, ([А-ЯЁ][а-яё]+)$/); if(g) return ({kk:'Сәлеметсіз бе, ',en:'Hello, ',zh:'您好，'}[LANG])+(LANG==='kk'?g[1]:translit(g[1]));
+  g=t.match(/^Рейс (LG-\d+): (.+?) → (.+?)\. (.+)$/); if(g){const a=cityAny(g[2]),b=cityAny(g[3]),rest=trText(g[4])||g[4]; return LANG==='en'?'Trip '+g[1]+': '+a+' → '+b+'. '+rest:LANG==='zh'?'行程 '+g[1]+'：'+a+' → '+b+'。'+rest:g[1]+' рейсі: '+a+' → '+b+'. '+rest;}
+  g=t.match(/^ул\. (.+)$/); if(g) return LANG==='kk'?g[1]+' к-сі':LANG==='en'?translit(g[1])+' St.':translit(g[1])+' 街';
+  g=t.match(/^автодорога (.+)$/); if(g){const a=cityAny(g[1]); return LANG==='kk'?a+' автожолы':LANG==='en'?a+' highway':a+' 公路';}
+  g=t.match(/^г\. (.+)$/); if(g&&cityTr(g[1])) return LANG==='kk'?cityTr(g[1])+' қ.':cityTr(g[1]);
+  g=t.match(/^(ТОО|АО|ИП|ООО|ОсОО) «([^»]+)»( —|:|,)?$/); if(g) return CO_FORM[g[1]][col]+' «'+(LANG==='kk'?g[2]:translit(g[2]))+'»'+(g[3]||'');
+  if(LANG!=='kk'&&(/^[А-ЯЁ][а-яё]+(?:[ -][А-ЯЁ][а-яё]+){1,2}$/.test(t)||/^[А-ЯЁ][а-яё]+ [А-ЯЁ]\.$/.test(t)||/^[А-ЯЁ]{2}$/.test(t)||/^[А-ЯЁ]{1,4}-[\d\/]+$/.test(t))) return translit(t);
+  return r&&r[col]?r[col]:null;
+}
+const SEPS=[' · ',' → ',' ⇄ ',' — ',': ',', ',' / ',' и '];
+function trText(src){
+  const t=src.trim(); if(!t||!/[А-Яа-яЁёӘәҒғҚқҢңӨөҰұҮүҺһІі]/.test(t)) return null;
+  let r=trLookup(t);
+  if(r==null){
+    for(const sep of SEPS){ if(t.indexOf(sep)<0) continue;
+      const parts=t.split(sep); let hit=false;
+      const out=parts.map(p=>{const q=p.trim(); if(!q) return p; const x=trLookup(q)||(q.endsWith('.')&&trLookup(q.slice(0,-1))?trLookup(q.slice(0,-1))+'.':null)||trText(q); if(x!=null){hit=true;return p.replace(q,x)} return p});
+      if(hit){ r=out.join(sep===' и '?(LANG==='en'?' and ':LANG==='zh'?'和':' және '):sep); break; }
+    }
+  }
+  if(r!=null&&LANG!=='kk'&&/[А-ЯЁ]/.test(r)) r=r.replace(/[А-ЯЁ][а-яё]+(?: [А-ЯЁ][а-яё]+)+/g,m=>translit(m)).replace(/«([^»]+)»/g,(m,a)=>/[А-Яа-яЁё]/.test(a)?'«'+translit(a)+'»':m);
+  return r==null?null:src.replace(t,r);
+}
+const I18N_SKIP='script,style,textarea,code,[data-noi18n],.doc';
+const I18N_ATTR=['placeholder','title','aria-label'];
+function i18nText(n){
+  if(!n.parentNode||(n.parentNode.closest&&n.parentNode.closest(I18N_SKIP))) return;
+  const src=n.__ru!=null?n.__ru:n.nodeValue;
+  if(LANG==='ru'){ if(n.__ru!=null&&n.nodeValue!==n.__ru) n.nodeValue=n.__ru; return; }
+  const t=trText(src); if(t!=null){ n.__ru=src; if(n.nodeValue!==t) n.nodeValue=t; } else if(n.__ru!=null) n.nodeValue=n.__ru;
+}
+function i18nEl(el){
+  if(el.closest&&el.closest(I18N_SKIP)) return;
+  I18N_ATTR.forEach(a=>{ if(!el.hasAttribute||!el.hasAttribute(a)) return;
+    el.__ia=el.__ia||{}; const src=el.__ia[a]!=null?el.__ia[a]:el.getAttribute(a);
+    if(LANG==='ru'){ if(el.__ia[a]!=null) el.setAttribute(a,el.__ia[a]); return; }
+    const t=trText(src); if(t!=null){ el.__ia[a]=src; el.setAttribute(a,t); } });
+}
+function i18nApply(root){
+  if(typeof document==='undefined'||!document.createTreeWalker||!root) return;
+  if(root.nodeType===3){ i18nText(root); return; }
+  if(root.nodeType!==1&&root.nodeType!==9) return;
+  const w=document.createTreeWalker(root,5,null); let n=w.currentNode;
+  while(n){ if(n.nodeType===3) i18nText(n); else if(n.nodeType===1) i18nEl(n); n=w.nextNode(); }
+}
+function setLang(code){
+  if(!LANG_NAMES[code]) return;
+  LANG=code; fxSet('operelleLang',code);
+  if(typeof document!=='undefined'&&document.documentElement) document.documentElement.lang=code==='kk'?'kk':code;
+  if(typeof onLangChange==='function') onLangChange();
+  i18nApply(document.body);
+  fxRefresh();
+}
+/* перевод новых узлов: окна, списки, уведомления */
+(function(){
+  if(typeof document==='undefined'||typeof MutationObserver==='undefined'||!document.body) return;
+  document.documentElement.lang=LANG==='kk'?'kk':LANG;
+  new MutationObserver(ms=>{ if(LANG==='ru') return; ms.forEach(m=>m.addedNodes.forEach(n=>i18nApply(n))); })
+    .observe(document.body,{childList:true,subtree:true});
+  if(LANG!=='ru') setTimeout(()=>i18nApply(document.body),0);
+})();
+/* строка на выбранном языке для текста, который собирается в коде (подсказки, заголовок окна) */
+const tr=s=>{if(LANG==='ru')return s;const x=trText(s);return x==null?s:x};
+
+/* единица «за килограмм» на языке страницы */
+FX_UNIT.kk['кг']='кг';FX_UNIT.en['кг']='kg';FX_UNIT.zh['кг']='公斤';
+/* города и страны авиапрограммы: казахский, английский, китайский */
+Object.assign(CITY_I18N,{'Шэньчжэнь':['Шэньчжэнь','Shenzhen','深圳'],'Гонконг':['Гонконг','Hong Kong','香港'],'Чжэнчжоу':['Чжэнчжоу','Zhengzhou','郑州'],'Сиань':['Сиань','Xi’an','西安'],
+ 'Дубай':['Дубай','Dubai','迪拜'],'Доха':['Доха','Doha','多哈'],'Франкфурт':['Франкфурт','Frankfurt','法兰克福'],'Льеж':['Льеж','Liège','列日'],'Люксембург':['Люксембург','Luxembourg','卢森堡'],
+ 'Амстердам':['Амстердам','Amsterdam','阿姆斯特丹'],'Сеул':['Сеул','Seoul','首尔'],'Дели':['Дели','Delhi','德里'],'ОАЭ':['БАӘ','UAE','阿联酋'],'Катар':['Катар','Qatar','卡塔尔'],
+ 'Германия':['Германия','Germany','德国'],'Бельгия':['Бельгия','Belgium','比利时'],'Нидерланды':['Нидерланд','Netherlands','荷兰'],'Южная Корея':['Оңтүстік Корея','South Korea','韩国'],'Индия':['Үндістан','India','印度']});
+const I18N_DICT={};
+
+/* ============================================================
+   OPERELLE AIR — пробная версия программы для авиаперевозок грузов
+   Общий блок панели и сайта: справочники, расчёт, подбор рейсов, предложения, отслеживание, рисунки.
+   Площадка — посредник: сводит грузовладельца с проверенным экспедитором. Место на рейсе бронирует экспедитор.
+   Все данные демонстрационные. Расписания, ставки и компании-партнёры — пример, а не действующие условия.
+   ============================================================ */
+
+/* ---------- утилиты ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=(n,u)=>fxMoney(n,u);
+const mln=n=>fxMln(n);
+const num=n=>Math.round(n).toLocaleString('ru-RU');
+const dec=n=>(Math.round(n*10)/10).toLocaleString('ru-RU');
+const wt=n=>n>=1000?dec(n/1000)+' т':num(n)+' кг';
+const pad=n=>String(n).padStart(2,'0');
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const NOW=new Date();
+const hoursAdd=h=>new Date(NOW.getTime()+h*3600e3);
+const fDs=d=>pad(d.getDate())+'.'+pad(d.getMonth()+1);
+const fT=d=>pad(d.getHours())+':'+pad(d.getMinutes());
+const fDT=d=>fDs(d)+' '+fT(d);
+const fD=d=>fDs(d)+'.'+d.getFullYear();
+const WD=['вс','пн','вт','ср','чт','пт','сб'];
+/* детерминированный генератор: демо-данные одинаковы при каждой загрузке */
+const hash=s=>{let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0)/4294967296};
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+function toast(msg,type){
+  const root=$('#toast-root'); if(!root||!root.appendChild) return;
+  const el=document.createElement('div'); el.className='toast '+(type||''); el.innerHTML=msg; root.appendChild(el);
+  setTimeout(()=>{el.style.transition='.3s';el.style.opacity='0';setTimeout(()=>el.remove(),300)},3800);
+}
+/* курс доллара из общего блока валют: цены сервисов заданы в долларах, показываются как все суммы */
+const usd=n=>n*(fxRates().USD||520);
+
+/* ---------- аэропорты: код → [город, страна, широта, долгота] ---------- */
+const AP={
+ ALA:['Алматы','KZ',43.35,77.04], NQZ:['Астана','KZ',51.02,71.47], KGF:['Караганда','KZ',49.67,73.33], CIT:['Шымкент','KZ',42.36,69.48],
+ AKX:['Актобе','KZ',50.25,57.21], SCO:['Актау','KZ',43.86,51.09], GUW:['Атырау','KZ',47.12,51.82],
+ CAN:['Гуанчжоу','CN',23.39,113.30], SZX:['Шэньчжэнь','CN',22.64,113.81], HKG:['Гонконг','CN',22.31,113.91], PVG:['Шанхай','CN',31.14,121.81],
+ PEK:['Пекин','CN',40.08,116.58], CGO:['Чжэнчжоу','CN',34.52,113.84], XIY:['Сиань','CN',34.44,108.75], URC:['Урумчи','CN',43.91,87.47],
+ DXB:['Дубай','AE',25.25,55.36], DOH:['Доха','QA',25.27,51.61], IST:['Стамбул','TR',41.26,28.74], GYD:['Баку','AZ',40.47,50.05], TAS:['Ташкент','UZ',41.26,69.28],
+ FRA:['Франкфурт','DE',50.03,8.57], LGG:['Льеж','BE',50.64,5.44], LUX:['Люксембург','LU',49.63,6.21], AMS:['Амстердам','NL',52.31,4.76],
+ ICN:['Сеул','KR',37.46,126.44], DEL:['Дели','IN',28.56,77.10]
+};
+const CITY=AP; /* имя для общего блока языков: по нему собирается список городов */
+const COUNTRY={KZ:'Казахстан',CN:'Китай',AE:'ОАЭ',QA:'Катар',TR:'Турция',AZ:'Азербайджан',UZ:'Узбекистан',DE:'Германия',BE:'Бельгия',LU:'Люксембург',NL:'Нидерланды',KR:'Южная Корея',IN:'Индия'};
+const KZ_AP=Object.keys(AP).filter(k=>AP[k][1]==='KZ'), FAR_AP=Object.keys(AP).filter(k=>AP[k][1]!=='KZ');
+const apn=k=>AP[k]?AP[k][0]:k;
+const isKZ=k=>AP[k]&&AP[k][1]==='KZ';
+const distKm=(a,b)=>{const R=6371,r=Math.PI/180,A=AP[a],B=AP[b],dl=(B[2]-A[2])*r,dn=(B[3]-A[3])*r;
+  const h=Math.sin(dl/2)**2+Math.cos(A[2]*r)*Math.cos(B[2]*r)*Math.sin(dn/2)**2;return Math.round(2*R*Math.asin(Math.sqrt(h)))};
+
+/* ---------- самолёты: код → [название, вид (N узкий багажный, W широкий багажный, F грузовой, J грузовой с горбом), груз на рейс т] ---------- */
+const AC={
+ A321:['Airbus A321','N',2.5], B738:['Boeing 737-800','N',2], A320:['Airbus A320','N',1.5], B763:['Boeing 767-300','W',14],
+ B734F:['Boeing 737-400F','F',19], B752F:['Boeing 757-200F','F',30], B763F:['Boeing 767-300F','F',52], A332F:['Airbus A330-200F','F',65],
+ B77F:['Boeing 777F','F',102], B744F:['Boeing 747-400F','J',112], B748F:['Boeing 747-8F','J',134]
+};
+const acFreighter=k=>AC[k][1]==='F'||AC[k][1]==='J';
+
+/* ---------- авиакомпании ----------
+   pre: первые три цифры авианакладной; hub: узел; net: откуда везёт через узел; how: как бронируют; api: цифровой доступ.
+   Сведения об авиакомпаниях взяты из отчёта от 03.10.2026; расписания ниже условные. */
+const AL={
+ KC:{n:'Air Astana',c:'KZ',pre:'465',base:'Алматы, Астана',fleet:'Багажные отсеки Airbus A321 и Boeing 767',how:'Грузовые офисы в Алматы и Астане, агенты за рубежом',api:'Открытого API нет. Статус накладной на freight.aero',lvl:0},
+ DV:{n:'SCAT',c:'KZ',pre:'655',base:'Шымкент, Алматы, Актау, Астана',fleet:'Багажные отсеки Boeing 737. Грузовой Boeing 767 заказан',how:'Только через грузовых агентов',api:'API и онлайн-отслеживания нет',lvl:0},
+ FS:{n:'FlyArystan',c:'KZ',pre:'465',base:'Алматы, Астана',fleet:'Багажные отсеки Airbus A320, место до 50 кг',how:'Через грузовые офисы Air Astana',api:'Отдельного доступа нет',lvl:0},
+ EK:{n:'Emirates SkyCargo',c:'AE',pre:'176',hub:'DXB',net:['CAN','SZX','PVG','HKG','DEL','FRA','AMS','ICN'],base:'Дубай',fleet:'Грузовые Boeing 777F',how:'Через экспедиторов и агентов',api:'Площадки CargoAi и cargo.one',lvl:2},
+ QR:{n:'Qatar Airways Cargo',c:'QA',pre:'157',hub:'DOH',net:['CAN','SZX','PVG','HKG','DEL','FRA','AMS','ICN'],base:'Доха',fleet:'Грузовые Boeing 777F',how:'Через экспедиторов',api:'Freightos (бронь без статуса IATA), cargo.one',lvl:2},
+ LH:{n:'Lufthansa Cargo',c:'DE',pre:'020',hub:'FRA',net:['AMS','LGG','LUX','PVG','PEK','ICN','DEL'],base:'Франкфурт',fleet:'Грузовые Boeing 777F',how:'Через экспедиторов',api:'Свой открытый портал: маршруты и отслеживание',lvl:3},
+ TK:{n:'Turkish Cargo',c:'TR',pre:'235',hub:'IST',net:['CAN','PVG','PEK','HKG','FRA','AMS','ICN','DEL'],base:'Стамбул',fleet:'Грузовые Airbus A330F и Boeing 777F',how:'Через экспедиторов',api:'CargoWise, cargo.one, Freightos, CargoAi',lvl:2},
+ '7L':{n:'Silk Way West',c:'AZ',pre:'501',hub:'GYD',net:['PVG','HKG','CGO','FRA','AMS','IST'],base:'Баку',fleet:'Грузовые Boeing 747 и 777F',how:'Через экспедиторов',api:'Freightos, CargoAi',lvl:2},
+ C6:{n:'My Freighter',c:'UZ',pre:'—',hub:'TAS',net:['FRA'],base:'Ташкент',fleet:'Грузовые Boeing 767-300F',how:'Через агентов',api:'Не найдено',lvl:1},
+ '3V':{n:'ASL Airlines Belgium',c:'BE',pre:'756',hub:'LGG',net:['AMS','FRA','LUX'],base:'Льеж',fleet:'Грузовые Boeing 747-400F',how:'Через агентов',api:'Не найдено',lvl:1},
+ CX:{n:'Cathay Cargo',c:'CN',pre:'160',base:'Гонконг',fleet:'Грузовые Boeing 747-8F',how:'Транзит через Астану по пути в Европу',api:'Свои API по запросу',lvl:2,transit:1},
+ CV:{n:'Cargolux',c:'LU',pre:'172',base:'Люксембург',fleet:'Грузовые Boeing 747',how:'Транзит через Астану, до 14 посадок в неделю',api:'API только по договору',lvl:1,transit:1},
+ GI:{n:'China Central Longhao',c:'CN',pre:'—',base:'Чжэнчжоу',fleet:'Грузовые Boeing 747-400F',how:'Транзит через Астану',api:'Не найдено',lvl:0,transit:1},
+ JAG:{n:'Alpha Sky',c:'KZ',pre:'684',base:'Туркестан',fleet:'Грузовые Boeing 737-400F и 757-200F',how:'Чартеры по заявке',api:'API нет',lvl:0,charter:1},
+ JUP:{n:'Jupiter Jet',c:'KZ',pre:'—',base:'Алматы',fleet:'Грузовой Boeing 757-200',how:'Чартеры по заявке',api:'API нет',lvl:0,charter:1},
+ ALT:{n:'Altair Airlines',c:'KZ',pre:'—',base:'Караганда',fleet:'Грузовой Boeing 737-300F',how:'Чартеры по заявке',api:'API нет',lvl:0,charter:1}
+};
+const LVL=[['API нет','b-slate'],['Через агентов','b-amber'],['Через площадки','b-blue'],['Открытый API','b-green']];
+/* регулярные участки: [авиакомпания, из, в, рейсов в неделю, самолёт]; работают в обе стороны */
+const LEGS=[
+ ['EK','DXB','ALA',1,'B77F'],['QR','DOH','ALA',2,'B77F'],['LH','FRA','ALA',2,'B77F'],['TK','IST','ALA',3,'A332F'],['7L','GYD','ALA',2,'B744F'],
+ ['C6','TAS','ALA',3,'B763F'],['3V','LGG','KGF',5,'B744F'],
+ ['KC','CAN','ALA',4,'A321'],['KC','PEK','ALA',5,'A321'],['KC','URC','ALA',7,'A321'],['KC','DXB','ALA',7,'A321'],['KC','IST','ALA',7,'B763'],['KC','ICN','ALA',4,'B763'],
+ ['KC','DEL','ALA',7,'A321'],['KC','TAS','ALA',7,'A321'],['KC','GYD','ALA',3,'A321'],['KC','FRA','NQZ',5,'B763'],['KC','IST','NQZ',5,'A321'],['KC','DXB','NQZ',4,'A321'],['KC','PEK','NQZ',3,'A321'],
+ ['FS','XIY','ALA',3,'A320'],['FS','URC','SCO',2,'A320'],['DV','IST','CIT',3,'B738'],['DV','IST','SCO',3,'B738'],['DV','PEK','NQZ',2,'B738'],
+ ['KC','ALA','NQZ',21,'A321'],['KC','ALA','SCO',7,'A321'],['KC','ALA','GUW',7,'A321'],['KC','ALA','AKX',5,'A321'],['DV','ALA','CIT',14,'B738'],['DV','NQZ','CIT',10,'B738'],
+ ['DV','NQZ','SCO',7,'B738'],['DV','NQZ','GUW',7,'B738'],['DV','NQZ','AKX',7,'B738'],['DV','ALA','KGF',5,'B738'],['DV','NQZ','KGF',3,'B738']
+];
+/* транзитные посадки без выгрузки: видны на табло, в подбор рейсов не попадают */
+const TRANSIT=[['CX','HKG','NQZ',5,'B748F','AMS'],['CV','CGO','NQZ',14,'B744F','LUX'],['GI','CGO','NQZ',4,'B744F','LGG']];
+const legHas=(a,b)=>LEGS.filter(L=>(L[1]===a&&L[2]===b)||(L[1]===b&&L[2]===a));
+/* дни вылета по числу рейсов в неделю */
+const DAYSET={1:[2],2:[2,6],3:[1,3,5],4:[1,3,5,0],5:[1,2,3,4,5],7:[0,1,2,3,4,5,6]};
+const legDays=n=>DAYSET[n>=7?7:n]||DAYSET[3];
+const daysText=n=>n>=7?'ежедневно':legDays(n).map(d=>WD[d]).join(', ');
+function nextDep(n,after){const ds=legDays(n);for(let i=1;i<9;i++){const d=new Date((after||NOW).getTime()+i*864e5);if(ds.includes(d.getDay()))return d}return hoursAdd(48)}
+
+/* ---------- виды груза: [id, название, пояснение, наценка] ---------- */
+const CT=[
+ ['gen','Обычный','Коробки, паллеты, запчасти, одежда',1],
+ ['exp','Срочный','Ближайший рейс и приоритет загрузки',1.25],
+ ['temp','Температурный','Лекарства, продукты, цветы',1.25],
+ ['dg','Опасный','Литиевые батареи, химия, аэрозоли',1.35],
+ ['val','Ценный','Электроника, ювелирные изделия',1.3],
+ ['big','Тяжёлый и негабарит','Место тяжелее 150 кг или длиннее 3 м',1.2],
+ ['live','Живые животные','Клетка по правилам IATA и ветеринарные документы',1.4]
+];
+const ct=id=>CT.find(x=>x[0]===id)||CT[0];
+/* документы под вид груза */
+const DOCS={
+ gen:['Инвойс','Упаковочный лист','Договор поставки'],
+ exp:['Инвойс','Упаковочный лист','Договор поставки'],
+ temp:['Инвойс','Упаковочный лист','Температурный режим от отправителя','Сертификат или регистрационное удостоверение'],
+ dg:['Инвойс','Упаковочный лист','Паспорт безопасности (MSDS)','Декларация отправителя об опасном грузе','Упаковка с маркировкой UN'],
+ val:['Инвойс','Упаковочный лист','Страховой полис на груз'],
+ big:['Инвойс','Упаковочный лист','Чертёж с размерами и точками крепления'],
+ live:['Ветеринарный сертификат','Разрешение на ввоз','Клетка по правилам IATA']
+};
+const DOCS_KZ=['Таможенная декларация: оформляет брокер','Сертификат соответствия ЕАЭС, если товар под него попадает'];
+
+/* ---------- расчёт: оплачиваемый вес и ориентир цены ---------- */
+/* c: {pcs, kg (вес всей партии), l, w, h (см, одно место)} */
+function airWeight(c){
+  const pcs=Math.max(1,+c.pcs||1), kg=Math.max(0,+c.kg||0), v=pcs*(+c.l||0)*(+c.w||0)*(+c.h||0);
+  const volKg=v/6000, chg=Math.max(kg,volKg), up=Math.ceil(chg*2)/2;
+  return {pcs,kg,m3:v/1e6,volKg:Math.round(volKg*10)/10,chg:up,byVol:volKg>kg,pieceKg:kg/pcs,maxDim:Math.max(+c.l||0,+c.w||0,+c.h||0)};
+}
+const WBREAK=[[45,1.35],[100,1.15],[300,1],[500,.93],[1000,.88],[1e9,.82]];
+/* ставка за кг в тенге: расстояние, весовая ступень, вид груза, пересадка, багажный отсек */
+function airRate(from,to,chg,type,opt){
+  const d=distKm(from,to), base=(1.1+d/1000*.75)*520, br=WBREAK.find(x=>chg<x[0])[1];
+  let k=br*ct(type)[3]; if(opt){ if(opt.stops) k*=1.12; if(opt.kind==='B') k*=.92; if(opt.air==='KC'||opt.air==='DV'||opt.air==='FS') k*=.97; }
+  return Math.round(base*k/10)*10;
+}
+const FEE_AWB=9000, FEE_TERM=28, FEE_TERM_MIN=6000, FEE_LAST=90, MIN_KG=45, FEE_PLATFORM=.03;
+function airQuote(from,to,cargo,opt){
+  const w=airWeight(cargo), rate=airRate(from,to,w.chg,cargo.type,opt), pay=Math.max(w.chg,MIN_KG);
+  const freight=rate*pay, term=Math.max(FEE_TERM_MIN,FEE_TERM*w.chg), last=opt&&opt.last?FEE_LAST*w.chg:0;
+  return {w,rate,freight,term,awb:FEE_AWB,last,total:Math.round((freight+term+FEE_AWB+last)/100)*100};
+}
+
+/* ---------- подбор рейсов: прямые, через узел авиакомпании, с доставкой от ворот страны ---------- */
+function optCheck(o,cargo){
+  const w=airWeight(cargo), t=cargo.type, kind=AC[o.ac][1], why=[];
+  if(kind==='N'){
+    if(o.air==='FS'&&w.pieceKg>50) why.push('Место тяжелее 50 кг эта авиакомпания не берёт');
+    if(w.pieceKg>150) why.push('Место тяжелее 150 кг не проходит в багажный отсек');
+    if(w.maxDim>150) why.push('Место длиннее 150 см не проходит в багажный отсек');
+    if(w.chg>AC[o.ac][2]*1000) why.push('Партия больше '+dec(AC[o.ac][2])+' т: одним рейсом не уйдёт');
+    if(t==='dg') why.push('Опасный груз пассажирским рейсом не возят');
+    if(t==='big') why.push('Негабарит возят только грузовым самолётом');
+  } else if(kind==='W'){
+    if(w.pieceKg>1000) why.push('Место тяжелее 1 т нужен грузовой самолёт');
+    if(w.maxDim>300) why.push('Место длиннее 3 м нужен грузовой самолёт');
+    if(w.chg>AC[o.ac][2]*1000) why.push('Партия больше '+dec(AC[o.ac][2])+' т: одним рейсом не уйдёт');
+    if(t==='dg') why.push('Опасный груз пассажирским рейсом не возят');
+  } else {
+    if(w.pieceKg>5000) why.push('Место тяжелее 5 т: только по согласованию с авиакомпанией');
+  }
+  return why;
+}
+function airOptions(from,to,cargo){
+  if(!AP[from]||!AP[to]||isKZ(from)===isKZ(to)) return [];
+  const imp=isKZ(to), kz=imp?to:from, far=imp?from:to, out=[], seen={};
+  const push=(air,gate,hub,ac,pw)=>{
+    const key=air+gate+(hub||''); if(seen[key]) return; seen[key]=1;
+    const path=[far]; if(hub) path.push(hub); path.push(gate); if(gate!==kz) path.push(kz);
+    if(!imp) path.reverse();
+    let km=0; for(let i=0;i<path.length-1;i++) km+=distKm(path[i],path[i+1]);
+    if(path.length>2&&km>distKm(far,kz)*2.6) return;
+    const kind=acFreighter(ac)?'F':'B', dom=gate!==kz?(legHas(gate,kz).length?'air':'road'):'';
+    const o={air,ac,kind,path,gate,hub:hub||'',stops:hub?1:0,last:dom,pw};
+    o.days=(hub?[3,5]:[1,2]).map(x=>x+(dom?1:0)+(kind==='F'&&!hub?0:0));
+    o.why=optCheck(o,cargo); o.ok=!o.why.length;
+    o.q=airQuote(far,kz,cargo,o); o.dep=nextDep(pw);
+    out.push(o);
+  };
+  const gates=[kz].concat(['ALA','NQZ','KGF'].filter(g=>g!==kz));
+  gates.forEach((g,gi)=>{
+    if(gi>0&&out.filter(o=>o.ok).length>=3) return;
+    legHas(g,far).forEach(L=>push(L[0],g,'',L[4],L[3]));
+    Object.keys(AL).forEach(id=>{const A=AL[id]; if(!A.hub||!A.net||A.hub===far||!A.net.includes(far)) return;
+      const L=LEGS.find(x=>x[0]===id&&((x[1]===A.hub&&x[2]===g)||(x[2]===A.hub&&x[1]===g))); if(L) push(id,g,A.hub,L[4],L[3]);});
+  });
+  return out.sort((a,b)=>(b.ok-a.ok)||(a.q.total-b.q.total)).slice(0,6);
+}
+const pathText=p=>p.map(apn).join(' → ');
+const optTitle=o=>AL[o.air].n+' · '+AC[o.ac][0];
+const optSub=o=>(o.stops?'с пересадкой: '+apn(o.hub):'прямой рейс')+(o.last==='road'?', далее автомобилем':o.last==='air'?', далее внутренним рейсом':'');
+
+/* ---------- экспедиторы-партнёры (демо-компании) ---------- */
+const CHECKS=[['reg','Регистрация компании','Справка о регистрации, БИН, директор'],['iata','Аккредитация или договор с авиакомпанией','Код агента IATA либо договор с авиакомпанией или генеральным агентом'],
+ ['contract','Договор с площадкой','Правила площадки, ответственность экспедитора перед клиентом'],['ins','Страхование ответственности','Полис экспедитора действует'],['ref','Отзывы и сделки','Три подтверждённые перевозки или рекомендации клиентов']];
+const FW_SEED=[
+ {id:'FW-01',name:'ТОО «Sky Bridge Cargo»',city:'Алматы',iata:1,since:2014,dirs:['CN','AE','TR','KR','UZ','QA'],types:['gen','exp','dg','val','big'],rating:4.8,deals:214,resp:25,st:'ok',person:'Данияр Сеитов',phone:'+7 701 555 01 21',mail:'air@skybridge.demo',agent:'Гуанчжоу, Шэньчжэнь'},
+ {id:'FW-02',name:'ТОО «Алтын Жол Авиа»',city:'Алматы',iata:0,since:2019,dirs:['CN'],types:['gen','exp','val'],rating:4.6,deals:131,resp:40,st:'ok',person:'Айгерим Нурланова',phone:'+7 707 555 02 34',mail:'cargo@altynzhol.demo',agent:'Гуанчжоу, Урумчи'},
+ {id:'FW-03',name:'ТОО «Eurasia Air Freight»',city:'Алматы',iata:1,since:2011,dirs:['DE','BE','NL','LU','TR','AE','AZ'],types:['gen','exp','temp','dg','val','big'],rating:4.7,deals:187,resp:35,st:'ok',person:'Марат Абенов',phone:'+7 701 555 03 47',mail:'ops@eurasiaair.demo',agent:'Франкфурт, Стамбул'},
+ {id:'FW-04',name:'ТОО «Нур Карго»',city:'Астана',iata:1,since:2016,dirs:['AE','TR','DE','QA','CN','UZ'],types:['gen','exp','val'],rating:4.5,deals:96,resp:55,st:'ok',person:'Ержан Тулегенов',phone:'+7 705 555 04 18',mail:'sales@nurcargo.demo',agent:'Дубай'},
+ {id:'FW-05',name:'ТОО «Silk Wing Logistics»',city:'Алматы',iata:1,since:2017,dirs:['CN','KR','IN'],types:['gen','exp','dg','val','temp'],rating:4.9,deals:302,resp:18,st:'ok',person:'Ли Вэй',phone:'+7 700 555 05 90',mail:'cn@silkwing.demo',agent:'Гуанчжоу, Шэньчжэнь, Шанхай'},
+ {id:'FW-06',name:'ТОО «Каспий Аэро Сервис»',city:'Актау',iata:0,since:2015,dirs:['AE','AZ','TR'],types:['gen','big','dg'],rating:4.4,deals:58,resp:70,st:'ok',person:'Руслан Бекмуратов',phone:'+7 702 555 06 73',mail:'info@caspianaero.demo',agent:'Баку'},
+ {id:'FW-07',name:'ТОО «Tengri Pharma Logistics»',city:'Алматы',iata:1,since:2018,dirs:['DE','NL','BE','IN','TR'],types:['temp','gen','val'],rating:4.7,deals:74,resp:45,st:'ok',person:'Сауле Ибраева',phone:'+7 701 555 07 05',mail:'cold@tengripharma.demo',agent:'Франкфурт, Дели'},
+ {id:'FW-08',name:'ИП «Жибек Экспресс»',city:'Алматы',iata:0,since:2023,dirs:['CN'],types:['gen','exp'],rating:4.2,deals:12,resp:90,st:'review',person:'Гульнара Ахметова',phone:'+7 747 555 08 62',mail:'zhibek@express.demo',agent:'Иу'},
+ {id:'FW-09',name:'ТОО «Орда Фрахт»',city:'Шымкент',iata:0,since:2021,dirs:['TR','UZ','AE'],types:['gen','exp'],rating:4.3,deals:33,resp:80,st:'review',person:'Бауыржан Ермеков',phone:'+7 708 555 09 44',mail:'orda@fraht.demo',agent:'Стамбул, Ташкент'}
+];
+FW_SEED.forEach(f=>{f.checks={reg:1,iata:f.iata||f.st==='ok'?1:0,contract:f.st==='ok'?1:0,ins:f.st==='ok'&&f.deals>60?1:0,ref:f.deals>=30?1:0}});
+/* компании из открытых источников: с ними можно договариваться о подключении (ссылки из отчёта) */
+const FW_LEADS=[
+ ['Globalink Logistics','Алматы','Авиа, море, железная дорога, авто; проектные грузы','https://www.theheavyliftgroup.com/members/globalink-logistics/'],
+ ['DHL Global Forwarding','Казахстан','Авиа- и морской фрахт','https://postandparcel.info/52705/news/dhl-connects-up-central-asia-with-kazakhstan-freight-facility/'],
+ ['NOYTECH','Казахстан','Экспедирование, бывший Kuehne+Nagel в регионе','https://www.stattimes.com/supply-chain/neumann-closes-mbo-with-kn-russiacis-launches-noytech-1346070'],
+ ['TELS Global','Алматы','Авиаперевозки от двери до двери, опасные грузы','https://telsglobal.kz/services/air_freight/'],
+ ['Air Cargo Experts','Алматы','Авиафрахт, грузовые чартеры','https://aircargoexperts.kz/en/'],
+ ['Трансавиа','Алматы и ещё 11 городов','Авиаагентство, грузовой агент SCAT','https://transavia.kz/gruzoperevozki-po-vsemu-miru-ot-aviakompanij-transavia'],
+ ['CargoPoint','Алматы','Грузовик плюс самолёт: Китай, Хоргос, Алматы, Европа','https://cargonewswire.com/cargopoint-expands-china-europe-multimodal-network-with-new-almaty-gateway/'],
+ ['Kales Airline Services','Алматы','Генеральный агент авиакомпаний','https://kales.com/office/almaty/'],
+ ['Air Charter Service','Алматы','Грузовые чартеры','https://www.aircharterservice.com/contact'],
+ ['EMEX','Алматы','Представитель FedEx: экспресс и таможня','https://www.emex.kz/']
+];
+
+/* ---------- источники данных и API (из отчёта) ----------
+   [id, название, что даёт, цена в долларах в месяц или текст, доступ: 0 открыт, 1 по договору, 2 переговоры; заметка] */
+const API_SRC=[
+ ['fr24','Flightradar24 API','Где сейчас грузовые борты, взлёт и посадка, история',9,0,'Нельзя перепродавать сырые данные и хранить их дольше 30 дней'],
+ ['adb','AeroDataBox','Табло аэропортов и расписание с пометкой грузового рейса',8,0,'Передавать данные компаниям-клиентам можно с тарифа за 200 долларов'],
+ ['oag','OAG Flight Info','Грузовые расписания и тоннаж рейса','по запросу',1,'Единственный сервис с грузовым тоннажем'],
+ ['parcels','Parcelsapp','Статусы груза по номеру авианакладной, 172 авиакомпании',19,0,'300 отправок в месяц на начальном тарифе'],
+ ['shipsgo','ShipsGo','Статусы, ожидаемое время прибытия, уведомления; 150+ авиакомпаний, есть Air Astana','по запросу',1,'Оплата за отправку плюс годовая плата за API'],
+ ['lh','Lufthansa Cargo API','Маршруты и рейсы, отслеживание груза Lufthansa Cargo','ключ после регистрации',0,'Бронирование только по согласованию'],
+ ['cargoai','CargoAi','Расписание, ставки и бронь у 115+ авиакомпаний','по запросу',1,'Подключает экспедиторов и цифровые площадки'],
+ ['freightos','Freightos','Ставки, место и бронь; Qatar и IAG Cargo без статуса IATA','по запросу',1,'Доступ у экспедитора-партнёра'],
+ ['efreight','e-Freight Казахстан','Электронные авианакладные: 17 аэропортов и 56 перевозчиков','переговоры',2,'Доступ сторонним площадкам не подтверждён'],
+ ['kc','Air Astana Cargo','Расписание и статусы в системе CHAMP Cargospot','переговоры',2,'Открытого API нет']
+];
+const API_ACCESS=[['Открыт','b-green'],['По договору','b-blue'],['Переговоры','b-amber']];
+
+/* ---------- агенты DURUS AI ---------- */
+const AGENTS=[
+ ['route','Маршрут','Находит рейсы и авиакомпании по направлению','API рейсов'],
+ ['cargo','Разбор заявки','Считает оплачиваемый вес и проверяет, какой рейс возьмёт груз','правила авиакомпаний'],
+ ['match','Подбор','Рассылает запрос проверенным экспедиторам и собирает цены','база экспедиторов'],
+ ['track','Слежение','Следит за грузом по номеру накладной и предупреждает о задержке','API отслеживания'],
+ ['check','Проверка партнёра','Сверяет регистрацию, аккредитацию и документы экспедитора','реестры и документы'],
+ ['docs','Документы','Собирает список документов под груз и страну','справочник документов']
+];
+
+/* ---------- заявки ---------- */
+const ST={new:['Новая','b-gold'],rfq:['Запрос экспедиторам','b-violet'],offers:['Есть предложения','b-cyan'],agreed:['Согласована','b-blue'],booked:['Забронирована','b-blue'],
+ transit:['В пути','b-amber'],arrived:['Прибыл','b-green'],done:['Выдан','b-slate'],cancel:['Отменена','b-red']};
+const STAGES=['new','rfq','offers','agreed','booked','transit','arrived','done'];
+const stageIdx=s=>STAGES.indexOf(s);
+/* демо-заявки: [номер, из, в, груз, вид, мест, кг, д, ш, в, клиент, компания, статус, часов назад создана, часов в пути] */
+const REQ_SEED=[
+ ['AIR-26041','CAN','ALA','Электроника: смартфоны и аксессуары','val',24,410,60,40,35,'Ержан Садыков','ТОО «Mobi Trade»','transit',70,.45],
+ ['AIR-26042','FRA','ALA','Лекарства, +2…+8 °C','temp',12,380,120,80,90,'Асель Жумабаева','ТОО «Фарм Альянс»','transit',52,.6],
+ ['AIR-26043','DXB','ALA','Запчасти для буровой установки','big',2,1840,280,120,110,'Нурлан Байжанов','ТОО «Каспий Дриллинг»','booked',40,0],
+ ['AIR-26044','SZX','ALA','Литиевые аккумуляторы для самокатов','dg',40,720,50,40,30,'Тимур Исаев','ТОО «Eco Ride»','offers',9,0],
+ ['AIR-26045','IST','CIT','Одежда, 38 коробок','gen',38,560,60,40,40,'Гульмира Оспанова','ИП «Модный базар»','offers',6,0],
+ ['AIR-26046','PVG','NQZ','Серверное оборудование','val',6,540,110,70,90,'Алексей Ким','ТОО «Data Line»','arrived',96,30],
+ ['AIR-26047','ALA','FRA','Образцы минерального сырья','gen',4,95,50,40,30,'Жанар Утепова','ТОО «Geo Resource»','agreed',20,0],
+ ['AIR-26048','CAN','KGF','Комплектующие для станков','gen',10,860,120,80,80,'Серик Мамыров','ТОО «Карметалл Сервис»','rfq',3,0],
+ ['AIR-26049','ICN','ALA','Косметика','gen',52,640,50,40,40,'Дина Ли','ТОО «K-Beauty Asia»','new',1,0],
+ ['AIR-26050','DEL','ALA','Вакцины, +2…+8 °C','temp',8,210,60,40,40,'Сауле Ибраева','ТОО «Мед Импорт»','new',0.5,0],
+ ['AIR-26040','HKG','ALA','Ноутбуки','val',30,720,60,45,40,'Ержан Садыков','ТОО «Mobi Trade»','done',240,60],
+ ['AIR-26039','LGG','KGF','Срезанные цветы','temp',60,2400,100,60,60,'Мадина Алиева','ТОО «Flora KZ»','done',170,48],
+ ['AIR-26038','GYD','ALA','Насосное оборудование','big',3,2950,260,140,150,'Руслан Бекмуратов','ТОО «Алматы Гидромаш»','transit',64,.3],
+ ['AIR-26037','TAS','ALA','Текстиль','gen',44,1320,80,60,50,'Азиз Каримов','ООО «Tashkent Textile»','done',300,40]
+];
+const personPhone=id=>'+7 70'+(Math.floor(hash(id)*8)+1)+' '+String(1000000+Math.floor(hash(id+'p')*8999999)).replace(/(\d{3})(\d{2})(\d{2})/,'$1 $2 $3');
+function mkReq(a){
+  const r={id:a[0],from:a[1],to:a[2],cargo:{name:a[3],type:a[4],pcs:a[5],kg:a[6],l:a[7],w:a[8],h:a[9]},client:{name:a[10],company:a[11],phone:personPhone(a[0])},
+    st:a[12],at:hoursAdd(-a[13]).toISOString(),src:'demo',sent:[],offers:[],log:[]};
+  const si=stageIdx(r.st);
+  if(si>=1){ r.sent=fwFor(r).map(f=>f.id); }
+  if(si>=2){ r.offers=genOffers(r); }
+  if(si>=3){ r.pick=0; }
+  const o=reqOffer(r);
+  if(si>=4&&o){ r.awb=mkAwb(r); r.bookedAt=hoursAdd(-8).toISOString(); }
+  if(si>=5&&o){ const T=tripH(r,o), last=T.d[T.d.length-1];
+    const ago=r.st==='transit'?T.total-last+last*(a[14]||.5):r.st==='arrived'?T.total+6:T.total+40;
+    r.depAt=hoursAdd(-ago).toISOString(); r.bookedAt=hoursAdd(-ago-30).toISOString();
+    if(new Date(r.at)>new Date(r.bookedAt)) r.at=hoursAdd(-ago-44).toISOString(); }
+  if(r.st==='done'){ r.rate={c:5,f:5-(hash(r.id)>.6?1:0)}; }
+  return r;
+}
+const mkAwb=r=>{const o=reqOffer(r)||{}, pre=AL[o.air]&&/^\d+$/.test(AL[o.air].pre)?AL[o.air].pre:'465', n=String(1000000+Math.floor(hash(r.id+'awb')*8999999)); return pre+'-'+n+(+n%7)};
+/* экспедиторы, которым подходит заявка: страна направления и вид груза */
+function fwFor(r,all){
+  const far=isKZ(r.to)?r.from:r.to, c=AP[far][1];
+  return getFw().filter(f=>(all||f.st==='ok')&&f.dirs.includes(c)&&f.types.includes(r.cargo.type));
+}
+/* предложения экспедиторов: рейс из подбора и цена вокруг ориентира */
+function genOffers(r){
+  const opts=airOptions(r.from,r.to,r.cargo).filter(o=>o.ok); if(!opts.length) return [];
+  return fwFor(r).filter(f=>r.sent.includes(f.id)).map((f,i)=>{
+    const h=hash(r.id+f.id), o=opts[h<.72?0:Math.min(opts.length-1,1+Math.floor(h*10)%2)], k=.93+hash(f.id+r.id+'k')*.2+(o===opts[0]?0:.12);
+    const q=airQuote(isKZ(r.to)?r.from:r.to,isKZ(r.to)?r.to:r.from,r.cargo,o), total=Math.round(q.total*k/1000)*1000;
+    return {fw:f.id,air:o.air,ac:o.ac,path:o.path,stops:o.stops,last:o.last,days:o.days,dep:o.dep.toISOString(),total,rate:Math.round(total/q.w.chg),valid:hoursAdd(48-i*3).toISOString(),
+      note:[f.agent?'Свой агент: '+f.agent:'','Забор груза со склада отправителя',r.cargo.type==='temp'?'Термоконтейнер и датчик температуры':'',r.cargo.type==='dg'?'Упаковка и декларация опасного груза':''].filter(Boolean).slice(0,2).join(' · ')};
+  }).sort((a,b)=>a.total-b.total);
+}
+const reqOffer=r=>r.pick!=null&&r.offers[r.pick]?r.offers[r.pick]:null;
+const fw=id=>getFw().find(f=>f.id===id)||{name:'—',checks:{}};
+const reqQuote=r=>{const kz=isKZ(r.to)?r.to:r.from, far=isKZ(r.to)?r.from:r.to; return airQuote(far,kz,r.cargo,null)};
+/* комиссия площадки: процент от суммы перевозки, платит экспедитор; деньги за перевозку идут ему напрямую */
+const reqFee=r=>{const o=reqOffer(r);return o?Math.round(o.total*FEE_PLATFORM):0};
+
+/* ---------- отслеживание: события по авианакладной ---------- */
+const EV={BKD:'Место забронировано',RCS:'Груз принят в аэропорту',MAN:'Включён в загрузку рейса',DEP:'Вылетел',ARR:'Прибыл',RCF:'Принят на складе аэропорта',NFD:'Получатель уведомлён',DLV:'Выдан получателю'};
+const airPath=(r,o)=>o.path.filter((k,i)=>!(o.last==='road'&&i===(isKZ(r.to)?o.path.length-1:0)));
+function genTrack(r){
+  const o=reqOffer(r); if(!o||!r.awb) return {ev:[],p:0,leg:null};
+  const dep=r.depAt?new Date(r.depAt):new Date(o.dep), b=new Date(Math.min(new Date(r.bookedAt||r.at).getTime(),dep.getTime()-12*36e5)), path=airPath(r,o);
+  const ev=[['BKD',b,path[0]],['RCS',new Date(dep.getTime()-9*36e5),path[0]],['MAN',new Date(dep.getTime()-3*36e5),path[0]]];
+  let t=dep.getTime(); const legs=[];
+  for(let i=0;i<path.length-1;i++){
+    const fl=distKm(path[i],path[i+1])/820+.7, a=t+fl*36e5; legs.push([path[i],path[i+1],t,a]);
+    ev.push(['DEP',new Date(t),path[i]]); ev.push(['ARR',new Date(a),path[i+1]]); t=a+(i<path.length-2?14*36e5:0);
+  }
+  const end=legs[legs.length-1][3];
+  ev.push(['RCF',new Date(end+3*36e5),path[path.length-1]],['NFD',new Date(end+5*36e5),path[path.length-1]]);
+  if(r.st==='done') ev.push(['DLV',new Date(end+26*36e5),path[path.length-1]]);
+  const now=Date.now(), done=ev.filter(e=>e[1].getTime()<=now||r.st==='done');
+  let leg=null; legs.forEach(L=>{if(now>=L[2]&&now<=L[3]) leg={from:L[0],to:L[1],t:(now-L[2])/(L[3]-L[2])}});
+  if(!leg&&r.st==='transit'){const L=legs.find(x=>now<x[2])||legs[legs.length-1]; leg={from:L[0],to:L[1],t:now<L[2]?0:1,ground:1}}
+  return {ev,done:done.length,leg,eta:new Date(end),legs};
+}
+/* часы полёта по участкам и всё время от вылета до прилёта, с ожиданием в узле */
+function tripH(r,o){const p=airPath(r,o),d=[];for(let i=0;i<p.length-1;i++)d.push(distKm(p[i],p[i+1])/820+.7);return {d,total:d.reduce((s,x)=>s+x,0)+(d.length-1)*14}}
+const findAwb=n=>{const k=String(n||'').replace(/\D/g,''); return k.length<8?null:getReqs().find(r=>r.awb&&r.awb.replace(/\D/g,'')===k)};
+
+/* ---------- хранилище: демо-заявки плюс всё, что создано и изменено в этом браузере ---------- */
+const AIR_VER=1;
+if(LS.get('operelleAirVer',0)!==AIR_VER){ try{['operelleAirReq','operelleAirFw','operelleAirApps','operelleAirCfg'].forEach(k=>localStorage.removeItem(k))}catch(e){} LS.set('operelleAirVer',AIR_VER); }
+let _fw=null, _reqs=null;
+function getFw(){ if(_fw) return _fw; const o=LS.get('operelleAirFw',{}); _fw=FW_SEED.map(f=>Object.assign({},f,o[f.id]||{})); Object.keys(o).forEach(id=>{if(!_fw.some(f=>f.id===id))_fw.push(o[id])}); return _fw; }
+function saveFw(f){ const o=LS.get('operelleAirFw',{}); o[f.id]=f; LS.set('operelleAirFw',o); _fw=null; }
+function getReqs(){
+  if(_reqs) return _reqs;
+  const o=LS.get('operelleAirReq',{}), seed=REQ_SEED.map(mkReq);
+  _reqs=seed.map(r=>o[r.id]||r); Object.keys(o).forEach(id=>{if(!_reqs.some(r=>r.id===id))_reqs.push(o[id])});
+  _reqs.sort((a,b)=>new Date(b.at)-new Date(a.at)); return _reqs;
+}
+function saveReq(r){ const o=LS.get('operelleAirReq',{}); o[r.id]=r; LS.set('operelleAirReq',o); _reqs=null; }
+const req=id=>getReqs().find(r=>r.id===id);
+const reloadStore=()=>{_reqs=null;_fw=null};
+const newReqId=()=>'AIR-'+(26051+Object.keys(LS.get('operelleAirReq',{})).filter(k=>!REQ_SEED.some(a=>a[0]===k)).length);
+const logReq=(r,text,who)=>{r.log=r.log||[];r.log.push({at:new Date().toISOString(),text,who:who||'Площадка'})};
+const getCfg=()=>Object.assign({agents:{route:1,cargo:1,match:1,track:1,check:1,docs:1},auto:1,fee:FEE_PLATFORM},LS.get('operelleAirCfg',{}));
+const setCfg=c=>LS.set('operelleAirCfg',c);
+/* шаги заявки: одни и те же действия для панели и для сайта (на сайте их выполняют агенты) */
+function reqSend(r,ids){ r.sent=ids||fwFor(r).map(f=>f.id); r.st='rfq'; logReq(r,'Запрос отправлен экспедиторам: '+r.sent.length,'Агент «Подбор»'); saveReq(r); }
+function reqOffers(r){ r.offers=genOffers(r); r.st=r.offers.length?'offers':'rfq'; if(r.offers.length) logReq(r,'Получены предложения: '+r.offers.length,'Агент «Подбор»'); saveReq(r); }
+function reqPick(r,i,who){ r.pick=i; r.st='agreed'; logReq(r,'Заказчик выбрал предложение. Контакты открыты обеим сторонам: '+fw(r.offers[i].fw).name,who||'Заказчик'); saveReq(r); }
+function reqBook(r){ r.awb=mkAwb(r); r.bookedAt=new Date().toISOString(); r.st='booked'; logReq(r,'Экспедитор забронировал рейс · авианакладная '+r.awb,fw(reqOffer(r).fw).name); saveReq(r); }
+function reqDepart(r){ r.depAt=new Date(NOW.getTime()-36e5).toISOString(); r.st='transit'; logReq(r,'Груз вылетел','Агент «Слежение»'); saveReq(r); }
+function reqArrive(r){ r.depAt=new Date(NOW.getTime()-(tripH(r,reqOffer(r)).total+6)*36e5).toISOString(); r.st='arrived'; logReq(r,'Груз прибыл и принят на складе аэропорта','Агент «Слежение»'); saveReq(r); }
+function reqDone(r){ r.st='done'; logReq(r,'Груз выдан получателю. Стороны подтверждают сделку и ставят оценки','Агент «Слежение»'); saveReq(r); }
+
+/* ============================================================
+   РИСУНКИ: карта, самолёты, виды груза
+   ============================================================ */
+const MK=10, MKX=7.6, LO0=-4, LA1=62, MW=1041, MH=490;
+const px=lon=>(lon-LO0)*MKX, py=lat=>(LA1-lat)*MK;
+const apxy=k=>[px(AP[k][3]),py(AP[k][2])];
+const KZ_SHAPE=[[46.5,48.4],[47.1,49.2],[46.8,49.9],[48.8,50.6],[50.8,51.7],[52.4,51.5],[54.5,51.0],[55.7,50.6],[57.5,51.1],[58.6,51.0],[61.5,51.0], [61.2,52.0],[60.7,52.7],[61.2,53.5],[61.0,54.0],[62.5,54.0],[64.9,54.4],[68.2,55.0],[69.0,55.4],[70.9,55.3],[71.1,54.3],[73.5,53.9],[74.4,53.5], [76.9,54.4],[77.9,53.3],[79.0,52.0],[80.0,50.8],[83.4,51.0],[85.2,50.0],[87.3,49.1],[86.6,48.5],[85.7,48.4],[85.5,47.1],[83.0,47.2],[82.6,45.3], [80.5,44.9],[80.5,44.2],[80.8,43.2],[80.2,42.2],[79.0,42.7],[77.0,42.95],[75.8,42.9],[74.6,43.1],[73.5,43.0],[73.5,42.5],[71.8,42.8],[71.0,42.5], [70.5,42.0],[69.5,41.55],[69.0,41.3],[68.6,40.6],[68.0,41.0],[66.7,41.2],[66.0,42.4],[66.1,43.0],[64.9,43.7],[62.0,43.5],[61.1,44.3],[58.6,45.6], [56.0,45.0],[56.0,41.3],[55.4,41.3],[54.0,42.3],[52.5,41.8],[52.4,42.4],[51.3,43.2],[50.9,44.2],[50.2,44.6],[51.2,45.3],[52.7,45.4],[53.1,46.4], [52.0,46.9],[50.9,46.9],[49.5,46.5],[49.2,46.3],[48.5,46.7],[48.0,47.7],[47.1,48.0]];
+const SEAS=[ [[49.2,46.3],[49.5,46.5],[50.9,46.9],[52.0,46.9],[53.1,46.4],[52.7,45.4],[51.2,45.3],[50.2,44.6],[50.9,44.2],[51.3,43.2],[52.4,42.4],[52.5,41.8],[52.9,41.0],[53.9,40.0],[53.1,39.3],[53.9,37.3],[52.0,36.6],[50.3,37.2],[49.0,37.5],[49.0,39.4],[49.5,40.2],[50.4,40.4],[49.4,41.0],[48.6,41.9],[47.5,43.0],[47.4,44.6],[46.7,45.0],[47.6,45.7]], [[28.0,41.5],[28.6,43.4],[29.7,45.2],[30.8,46.5],[32.6,46.1],[33.6,45.9],[32.5,45.3],[33.5,44.5],[35.4,45.0],[36.6,45.3],[38.2,44.4],[39.7,43.5],[41.5,42.5],[41.6,41.5],[38.0,41.0],[35.0,42.0],[33.0,42.0],[31.0,41.1],[29.0,41.2]], [[35.0,46.2],[36.6,45.4],[38.0,46.0],[39.3,47.1],[37.6,47.0],[35.3,46.6]], [[73.6,45.4],[74.6,46.2],[76.0,46.7],[77.6,46.6],[79.0,46.5],[78.8,46.2],[77.4,46.3],[76.0,46.3],[74.8,45.8],[74.0,45.0]], [[58.3,45.9],[59.3,46.6],[60.6,46.6],[61.0,46.0],[59.6,45.2],[58.6,44.6]]];
+
+/* суша крупными контурами: рисуется точками, поэтому точность берегов условная */
+const LAND=[
+ [[133,62],[133,42.8],[131.9,43.1],[130.7,42.3],[129.7,41.4],[128.3,40],[127.5,39.3],[128.4,38.5],[129.4,37],[129.4,35.5],[128.6,34.9],[126.5,34.4],[126.4,35.6],[126.7,37],[125.2,37.8],[125.3,39.4],[124.4,40],[121.6,38.9],[122.2,40.6],[121.1,40.9],[119.6,39.9],[117.7,39],[119,37.7],[119.8,37.1],[121.4,37.6],[122.6,37.4],[120.4,36.1],[119.4,34.7],[120.9,32.6],[121.9,31],[121,30.3],[122,29.8],[120.9,28],[119.7,26],[118.2,24.5],[116.7,23.3],[114.3,22.4],[113.5,22.2],[111.8,21.6],[110.5,21.2],[110.3,20.3],[109.8,21],[109.1,21.5],[108,21.5],[106.8,20.7],[105.8,18.7],[107.6,16.6],[108.3,16],[109.3,13.8],[109.4,13],[102.6,13],[100.9,13.4],[100,13.4],[99.9,13],[98.6,13],[97.7,16.3],[96.9,17.2],[95.3,15.8],[94.3,16],[94.5,18.5],[92.4,20.7],[91.8,22.3],[90.3,22],[88.8,21.6],[87,21.5],[86.4,20],[85.2,19.7],[83.3,17.7],[82.3,16.6],[81.2,16],[80.3,15.3],[80.2,13],[74.8,13],[74.1,14.8],[73.3,17],[72.8,19],[72.8,21],[72.2,21.8],[70.4,20.9],[69,22.3],[70,23],[68.6,23.6],[67.3,24.4],[66.9,24.9],[64.6,25.3],[61.6,25.2],[57.3,25.6],[56.8,27.1],[54.5,26.6],[52.6,27.5],[50.8,29],[50.1,30.2],[48.9,30.4],[48,29.9],[48.5,28.5],[50.1,26.6],[50.7,25],[51.6,26.1],[51.6,24.7],[52.6,24.2],[54.4,24.4],[55.3,25.3],[56.3,26.2],[56.4,24.9],[57.2,23.9],[58.6,23.6],[59.8,22.5],[58.6,20.4],[57.8,18.9],[56.6,18.1],[55,17],[52.2,15.6],[49.1,14.5],[47.5,13.6],[45,13],[43.3,13],[42.9,14.8],[42.6,16.5],[41.2,18.8],[39.2,21.5],[38.1,24.1],[36.5,26],[35,28.1],[35,29.5],[34.3,27.8],[33.6,28.3],[32.6,29.9],[32.4,31.2],[34.2,31.3],[34.9,32.8],[35.8,34.5],[35.9,35.8],[36.2,36.6],[34.6,36.8],[33.9,36.3],[32.3,36.1],[30.7,36.9],[29.1,36.4],[27.4,37],[26.3,38.3],[26.9,39.5],[26.2,40],[26,40.7],[24,40.8],[23.3,40.2],[22.9,40.5],[22.6,39.4],[24,38.2],[23,37.3],[22.8,36.5],[21.7,36.9],[21.1,38.3],[20,39.7],[19.4,41],[19.4,41.9],[17.5,43],[15.2,44.2],[14.5,45.2],[13.7,45.6],[12.3,45.3],[12.4,44.2],[13.6,43.5],[15.9,41.9],[18,40.6],[18.5,40.1],[17,40.5],[16.6,39.6],[17.1,39],[16.1,38],[15.65,37.95],[16.2,39],[15.6,40],[14.2,40.8],[12.2,41.8],[10.5,42.9],[10.2,43.9],[8.9,44.4],[7.5,43.8],[6.2,43.1],[4.7,43.4],[3.2,43.2],[3.2,42],[0.9,41],[-0.3,39.5],[-0.6,38],[-2,36.8],[-4,36.7],[-4,43.4],[-1.8,43.4],[-1.2,44.7],[-1.2,46.2],[-2.2,47.2],[-4,47.9],[-4,48.7],[-1.6,48.6],[-1.6,49.7],[0.2,49.5],[1.6,50.2],[1.6,50.9],[3.5,51.4],[4.5,52.4],[5,53.2],[7,53.5],[8.6,53.6],[8.6,54.9],[8.1,55.6],[8.2,57],[10.5,57.7],[10.3,56.2],[9.5,55],[10.9,54.4],[12.5,54.4],[14.2,54],[16.2,54.3],[18.5,54.7],[19.9,54.4],[21,55.3],[21,57],[22.6,57.7],[24.3,57.2],[24.4,58.3],[23.5,58.7],[23.5,59.3],[28,59.6],[30.2,59.9],[28.5,60.6],[25,60.3],[23,59.9],[21.4,60.6],[21.5,62]],
+ [[5,62],[5.2,60.5],[5.4,59.3],[6.6,58.1],[8.2,58.1],[10.5,59.2],[11.2,58.9],[12,57.6],[12.8,56.1],[13,55.4],[14.3,55.5],[14.6,56.1],[16.4,56.6],[16.7,57.8],[18.2,59.2],[18.9,60.1],[17.3,60.7],[17.4,62]],
+ [[-4,58.6],[-3,58.6],[-1.8,57.6],[-2.3,56.5],[-3,56],[-1.6,55.5],[-0.1,54],[0.3,53],[1.7,52.7],[1.4,51.3],[0.3,50.8],[-1.5,50.7],[-4,50.3]],
+ [[-4,35.2],[-2,35.1],[0,35.9],[3,36.8],[7,37],[10,37.3],[11,36.9],[10.5,35.5],[10.2,34.3],[11.2,33.3],[13.2,32.9],[15.3,32.3],[16.5,31.2],[19.2,30.3],[20.1,32.1],[21.7,32.9],[23.1,32.6],[25,31.6],[29,30.9],[30,31.3],[31,31.5],[32.3,31.2],[32.6,29.9],[33.6,27.5],[34.4,26],[35.5,24],[35.7,23],[36.9,22],[37.3,20.9],[37.3,19.5],[38.6,18],[39.3,16],[40.9,14.7],[42.4,13],[-4,13]],
+ [[12.5,38],[15.6,38.2],[15.1,36.7],[12.5,37.6]],[[8.2,41.1],[9.7,40.9],[9.5,39.2],[8.5,39]],[[32.3,35],[34.5,35.6],[34,34.9],[32.7,34.6]],
+ [[121.5,25.2],[121.9,24.5],[120.8,22],[120.1,23.2],[121,25]],[[108.7,19.3],[110.3,20],[111,19.6],[110,18.3],[108.7,18.5]],
+ [[129.7,33.3],[131,33.9],[131.9,33.2],[131.7,31.5],[130.6,31.2],[130.2,32.2]],[[130.9,34],[133,34.2],[133,35.5],[131.3,34.5]]
+];
+const gpoly=a=>a.map(p=>px(p[0]).toFixed(1)+','+py(p[1]).toFixed(1)).join(' ');
+/* дуга рейса: изгиб к северу, как на картах полётов */
+function arc(a,b,k){
+  const A=apxy(a),B=apxy(b),d=Math.hypot(B[0]-A[0],B[1]-A[1]),cx=(A[0]+B[0])/2,cy=(A[1]+B[1])/2-d*(k==null?.2:k);
+  return {d:'M'+A[0].toFixed(1)+' '+A[1].toFixed(1)+' Q'+cx.toFixed(1)+' '+cy.toFixed(1)+' '+B[0].toFixed(1)+' '+B[1].toFixed(1),
+    at(t){const u=1-t,x=u*u*A[0]+2*u*t*cx+t*t*B[0],y=u*u*A[1]+2*u*t*cy+t*t*B[1],dx=2*u*(cx-A[0])+2*t*(B[0]-cx),dy=2*u*(cy-A[1])+2*t*(B[1]-cy);return [x,y,Math.atan2(dy,dx)*180/Math.PI]}};
+}
+const PLANE='M11 0L3 -1.5L-1 -8H-3.2L-1.4 -1.5L-7.4 -1.1L-9.4 -3.8H-10.8L-9.8 0L-10.8 3.8H-9.4L-7.4 1.1L-1.4 1.5L-3.2 8H-1L3 1.5Z';
+/* где стоит подпись аэропорта: [сдвиг x, сдвиг y, 1 = слева от точки] */
+const LPOS={KGF:[9,14],CIT:[-9,-6,1],TAS:[-9,15,1],GYD:[-9,15,1],GUW:[-9,-7,1],SCO:[-9,5,1],AKX:[9,-7],DOH:[-9,15,1],DXB:[9,5],HKG:[9,14],SZX:[9,2],CAN:[-9,-5,1],
+ FRA:[9,5],LGG:[-9,4,1],AMS:[-9,-6,1],LUX:[-9,15,1],IST:[-9,-6,1],DEL:[9,5],ICN:[-9,-6,1],PVG:[-9,-6,1],PEK:[-9,-6,1],CGO:[9,5],XIY:[-9,14,1],URC:[9,-6]};
+/* карта: o.routes [{a,b,main,fly,dur,delay}], o.planes [{a,b,t,id,ground}], o.labels [коды], o.box [x,y,w,h], o.id */
+function airMap(o){
+  o=o||{}; const id=o.id||'m', box=o.box||[0,0,MW,MH];
+  const used={}; (o.routes||[]).forEach(r=>{used[r.a]=1;used[r.b]=1}); (o.planes||[]).forEach(p=>{used[p.a]=1;used[p.b]=1}); (o.labels||[]).forEach(k=>used[k]=1);
+  let h='<svg class="amap" viewBox="'+box.join(' ')+'" preserveAspectRatio="'+(o.slice?'xMidYMid slice':'xMidYMid meet')+'" role="img" aria-label="Карта рейсов">'+
+   '<defs><pattern id="'+id+'d" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.2" class="am-dot"/></pattern>'+
+   '<pattern id="'+id+'k" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.45" class="am-kzdot"/></pattern></defs>'+
+   '<rect x="0" y="0" width="'+MW+'" height="'+MH+'" class="am-sea"/>'+
+   LAND.map(a=>'<polygon points="'+gpoly(a)+'" fill="url(#'+id+'d)"/>').join('')+
+   SEAS.map(a=>'<polygon points="'+gpoly(a)+'" class="am-sea"/>').join('')+
+   '<polygon points="'+gpoly(KZ_SHAPE)+'" class="am-sea"/><polygon points="'+gpoly(KZ_SHAPE)+'" fill="url(#'+id+'k)" class="am-kz"/>';
+  (o.routes||[]).forEach((r,i)=>{const a=arc(r.a,r.b,r.k);
+    h+='<path id="'+id+'r'+i+'" d="'+a.d+'" class="am-rt'+(r.main?' main':'')+'"/>'+(r.flow===0?'':'<path d="'+a.d+'" class="am-flow" style="animation-delay:-'+(i*.37).toFixed(2)+'s"/>');
+    if(r.fly) h+='<g class="am-pl"><path d="'+PLANE+'" transform="scale('+(r.main?1.05:.85)+')"/><animateMotion dur="'+(r.dur||18)+'s" begin="-'+(r.delay||0)+'s" repeatCount="indefinite" rotate="auto"><mpath href="#'+id+'r'+i+'"/></animateMotion></g>';
+  });
+  Object.keys(used).forEach(k=>{const p=apxy(k),kz=isKZ(k),lab=(o.labels||[]).includes(k)||kz,lp=LPOS[k]||[9,-6];
+    h+='<g class="am-ap'+(kz?' kz':'')+'" transform="translate('+p[0].toFixed(1)+' '+p[1].toFixed(1)+')">'+(kz?'<circle r="9" class="am-ring"/>':'')+'<circle r="'+(kz?4:3)+'" class="am-pt"/>'+
+      (lab?'<text x="'+lp[0]+'" y="'+lp[1]+'"'+(lp[2]?' text-anchor="end"':'')+'>'+(o.codes===0?'':'<tspan class="am-code">'+k+'</tspan> ')+esc(apn(k))+'</text>':'')+'</g>'});
+  (o.planes||[]).forEach(p=>{const a=arc(p.a,p.b,p.k),q=a.at(clamp(p.t,0,1));
+    h+='<g class="am-live'+(p.ground?' gr':'')+(p.sel?' sel':'')+'" transform="translate('+q[0].toFixed(1)+' '+q[1].toFixed(1)+')"'+(p.id?' onclick="'+p.id+'" tabindex="0" role="button"':'')+'><circle r="13" class="am-halo"/><path d="'+PLANE+'" transform="rotate('+q[2].toFixed(0)+') scale(1.15)"/>'+(p.label?'<text x="14" y="4">'+esc(p.label)+'</text>':'')+'</g>'});
+  return h+'</svg>';
+}
+const AMAP_CSS='.amap{display:block;width:100%;height:auto}.am-sea{fill:#08090B}.am-dot{fill:#343A45}.am-kzdot{fill:#FF6B1A;fill-opacity:.62}.am-kz{stroke:#FF6B1A;stroke-opacity:.5;stroke-width:1;stroke-linejoin:round}'+
+ '.am-rt{fill:none;stroke:#FF6B1A;stroke-opacity:.28;stroke-width:1.2;stroke-linecap:round}.am-rt.main{stroke-opacity:.6;stroke-width:1.7}'+
+ '.am-flow{fill:none;stroke:#FFD2B0;stroke-width:1.8;stroke-linecap:round;stroke-dasharray:3 46;animation:amflow 2.4s linear infinite}@keyframes amflow{to{stroke-dashoffset:-49}}'+
+ '.am-pl path{fill:#fff}.am-ap text{font:500 11px var(--mono,monospace);fill:#8F96A3}.am-ap.kz text{fill:#F2F3F5;font-size:12px}.am-code{fill:#FF6B1A;font-weight:600}'+
+ '.am-pt{fill:#C9CED6}.am-ap.kz .am-pt{fill:#fff}.am-ring{fill:none;stroke:#FF6B1A;stroke-width:1.3;opacity:.55;transform-box:fill-box;transform-origin:center;animation:amping 2.8s ease-out infinite}'+
+ '@keyframes amping{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}'+
+ '.am-live{cursor:pointer}.am-live path{fill:#fff}.am-live .am-halo{fill:#FF6B1A;opacity:.28}.am-live:hover .am-halo,.am-live.sel .am-halo{opacity:.6}.am-live.gr path{fill:#F59E0B}.am-live text{font:600 11px var(--mono,monospace);fill:#fff;paint-order:stroke;stroke:#08090B;stroke-width:3px}'+
+ '@media (prefers-reduced-motion:reduce){.am-flow,.am-ring{animation:none}}';
+
+/* самолёт сбоку: вид N/W пассажирский (груз в нижнем отсеке), F грузовой, J грузовой с горбом; оранжевым показано, где лежит груз */
+function acArt(code,cls){
+  const k=AC[code]?AC[code][1]:code, fr=k==='F'||k==='J', wide=k!=='N';
+  const body='M14 61 Q20 44 58 42 L326 42 Q372 43 388 50 L352 68 Q330 76 300 76 L58 76 Q22 75 14 61Z';
+  return '<svg class="ac-art '+(cls||'')+'" viewBox="0 0 400 112" aria-hidden="true">'+
+    (k==='J'?'<path d="M40 45 Q62 27 96 27 L150 27 Q172 28 186 42Z" class="ac-b"/>':'')+
+    '<path d="M322 42 L350 8 H372 L360 42Z" class="ac-b"/><path d="M342 55 L386 51 L388 56 L348 62Z" class="ac-b"/>'+
+    '<path d="'+body+'" class="ac-b'+(fr?' ac-full':'')+'"/>'+
+    (fr?'<rect x="86" y="46" width="52" height="24" rx="3" class="ac-door"/><path d="M150 50H300M150 58H300M150 66H300" class="ac-crate"/>'
+       :'<path d="M70 66 H300 Q318 66 330 70 L300 76 H58Z" class="ac-hold"/><path d="M72 53H312" class="ac-win"/>')+
+    '<path d="M150 68 L232 68 L266 96 L240 96Z" class="ac-w"/><rect x="176" y="80" width="'+(wide?40:32)+'" height="'+(wide?17:13)+'" rx="6" class="ac-e"/>'+
+    (k==='J'||code==='B77F'?'<rect x="128" y="76" width="34" height="14" rx="6" class="ac-e"/>':'')+
+    '<path d="M22 58 L40 55" class="ac-win"/></svg>';
+}
+const ACART_CSS='.ac-art{display:block;width:100%;height:auto}.ac-b{fill:#191C21;stroke:#5B626E;stroke-width:1.6;stroke-linejoin:round}.ac-full{fill:rgba(255,107,26,.3);stroke:#FF6B1A}'+
+ '.ac-hold{fill:rgba(255,107,26,.75)}.ac-win{stroke:#7B828E;stroke-width:2.4;stroke-dasharray:1.5 5;stroke-linecap:round;fill:none}.ac-door{fill:none;stroke:#FFD2B0;stroke-width:1.6}'+
+ '.ac-crate{stroke:#FF6B1A;stroke-opacity:.55;stroke-width:5;stroke-dasharray:14 5;fill:none}.ac-w{fill:#22262D;stroke:#5B626E;stroke-width:1.6;stroke-linejoin:round}.ac-e{fill:#22262D;stroke:#5B626E;stroke-width:1.6}';
+/* рисунки видов груза */
+const CT_ART={
+ gen:'<path d="M8 17l16-8 16 8v16l-16 8-16-8z"/><path d="M8 17l16 8 16-8M24 25v16M16 13l16 8"/>',
+ exp:'<path d="M16 16l12-6 12 6v12l-12 6-12-6z"/><path d="M16 16l12 6 12-6M28 22v12M4 18h8M2 24h10M6 30h6"/>',
+ temp:'<path d="M10 14h28v24H10z"/><path d="M24 19v14M18 22.500l12 7M30 22.500l-12 7M21.500 19.500L24 22l2.500-2.500M21.500 32.500L24 30l2.500 2.500"/><path d="M16 14v-4h16v4"/>',
+ dg:'<path d="M24 6l18 18-18 18L6 24z"/><path d="M24 15c1 4 6 6 6 11a6 6 0 0 1-12 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4 1-7 2-10z"/>',
+ val:'<path d="M9 20h30v20H9z"/><path d="M15 20v-5a9 9 0 0 1 18 0v5M24 27v6"/><circle cx="24" cy="27" r="2.200"/>',
+ big:'<path d="M4 20h40v14H4z"/><path d="M4 20l5-6h30l5 6M14 20v14M34 20v14M4 41h40M4 38v6M44 38v6"/>',
+ live:'<path d="M9 14h30v24H9z"/><path d="M15 14v24M21 14v24M27 14v24M33 14v24"/><path d="M19 9h10v5H19z"/>'
+};
+const ctArt=(id,s)=>'<svg class="ct-art" viewBox="0 0 48 48" width="'+(s||40)+'" height="'+(s||40)+'" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(CT_ART[id]||CT_ART.gen)+'</svg>';
+/* логотип: самолёт на оранжевой плашке */
+const airLogo=s=>'<svg class="air-logo" viewBox="0 0 40 40" width="'+(s||36)+'" height="'+(s||36)+'" aria-hidden="true"><rect width="40" height="40" rx="10" fill="#FF6B1A"/><path d="'+PLANE+'" transform="translate(20 20) rotate(-38) scale(1.35)" fill="#180900"/></svg>';
+/* полоса этапов заявки */
+const STAGE_SHORT=['Заявка','Запрос','Цены','Выбор','Бронь','В пути','Прибыл','Выдан'];
+const stageBar=r=>{const i=stageIdx(r.st);return '<div class="stage">'+STAGE_SHORT.map((n,k)=>'<div class="'+(k<i?'d':k===i?'c':'')+'"><i></i><span>'+n+'</span></div>').join('')+'</div>'};
+(function(){if(typeof document==='undefined'||!document.head||!document.createElement)return;try{const st=document.createElement('style');st.textContent=AMAP_CSS+ACART_CSS;document.head.appendChild(st)}catch(e){}})();
+
+/* ============================================================
+   OPERELLE AIR — клиентский сайт (пробная версия)
+   Расчёт, заявка, кабинет заказчика с предложениями экспедиторов, отслеживание, анкета экспедитора.
+   Заявки видит панель управления: общий ключ operelleAirReq в памяти браузера.
+   ============================================================ */
+const C=Object.assign({imp:1,far:'CAN',kz:'ALA',type:'gen',pcs:10,kg:120,l:60,w:40,h:40},LS.get('operelleAirCalc',{}));
+const cFrom=()=>C.imp?C.far:C.kz, cTo=()=>C.imp?C.kz:C.far;
+const POP=[['CAN','ALA'],['SZX','ALA'],['HKG','ALA'],['DXB','ALA'],['IST','ALA'],['FRA','ALA'],['ICN','ALA'],['DEL','ALA'],['LGG','KGF'],['IST','CIT']];
+const popCargo={type:'gen',pcs:5,kg:100,l:50,w:40,h:40};
+const bestOf=(a,b,c)=>{const o=airOptions(a,b,c).filter(x=>x.ok);return o.length?{n:o.length,min:o.reduce((m,x)=>Math.min(m,x.q.total),1e15),max:o.reduce((m,x)=>Math.max(m,x.q.total),0),rate:o.reduce((m,x)=>Math.min(m,x.q.rate),1e15),o:o[0],all:o}:null};
+function toggleNav(){ const m=$('#mnav'); m.hidden=!m.hidden; }
+
+/* ---------- первый экран ---------- */
+function renderTick(){
+  const s=POP.map(p=>{const b=bestOf(p[0],p[1],popCargo);return b?'<span>'+esc(apn(p[0]))+' → '+esc(apn(p[1]))+' <b><i>от</i> '+fxText(money(b.rate,'/кг'))+'</b></span>':''}).join('');
+  $('#tick').innerHTML='<div>'+s+s+'</div>';
+}
+function renderHeroMap(){
+  const R=[['CAN','ALA',1],['DXB','ALA',1],['IST','ALA',1],['FRA','ALA',1],['GYD','ALA'],['TAS','ALA'],['ICN','ALA',1],['DEL','ALA'],['PEK','ALA'],['LGG','KGF',1],['FRA','NQZ'],['IST','CIT'],['HKG','NQZ'],['URC','ALA'],['DOH','ALA'],['ALA','NQZ'],['ALA','SCO'],['NQZ','AKX']];
+  $('#heroMap').innerHTML=airMap({id:'h',codes:0,box:[236,40,800,400],routes:R.map((r,i)=>({a:r[0],b:r[1],main:r[2],fly:r[2]||i%2===0,dur:13+hash(r[0]+r[1])*12,delay:hash(r[1]+r[0])*10,flow:r[2]?1:0})),
+    labels:['CAN','DXB','IST','ICN','DEL','PEK','TAS','GYD','URC']});
+}
+/* ---------- расчёт ---------- */
+function renderCalc(){
+  document.querySelectorAll('#dirTabs button').forEach(b=>b.classList.toggle('on',(+b.dataset.imp)===(C.imp?1:0)));
+  const sel=(k,list)=>'<select id="c-'+k+'" onchange="cSet(\''+k+'\',this.value)">'+list.map(x=>'<option value="'+x+'"'+(C[k]===x?' selected':'')+'>'+esc(apn(x))+', '+COUNTRY[AP[x][1]]+'</option>').join('')+'</select>';
+  const n=(k,lab)=>'<div class="field"><label for="c-'+k+'">'+lab+'</label><input id="c-'+k+'" type="number" min="0" inputmode="decimal" value="'+C[k]+'" oninput="cSet(\''+k+'\',this.value,1)"></div>';
+  $('#calcBody').innerHTML='<div class="grid2"><div class="field"><label for="c-far">'+(C.imp?'Откуда':'Куда')+'</label>'+sel('far',FAR_AP)+'</div><div class="field"><label for="c-kz">'+(C.imp?'Куда':'Откуда')+'</label>'+sel('kz',KZ_AP)+'</div></div>'+
+   '<div class="field"><label for="c-type">Что везём</label><select id="c-type" onchange="cSet(\'type\',this.value)">'+CT.map(c=>'<option value="'+c[0]+'"'+(C.type===c[0]?' selected':'')+'>'+c[1]+': '+c[2].toLowerCase()+'</option>').join('')+'</select></div>'+
+   '<div class="grid2">'+n('pcs','Мест')+n('kg','Вес всего, кг')+'</div>'+
+   '<div class="grid3">'+n('l','Длина, см')+n('w','Ширина, см')+n('h','Высота, см')+'</div>';
+  renderQuote();
+}
+function cSet(k,v,soft){
+  C[k]=['pcs','kg','l','w','h'].includes(k)?Math.max(0,+v||0):v; LS.set('operelleAirCalc',C);
+  if(soft) renderQuote(); else renderCalc();
+}
+function weightBox(w){
+  const m=Math.max(w.kg,w.volKg,1);
+  return '<div class="wbox"><div class="cap">Оплачиваемый вес: берётся больший</div>'+
+   '<div class="wrow'+(w.byVol?'':' on')+'"><span>По весам</span><i><b style="width:'+(w.kg/m*100).toFixed(0)+'%"></b></i><b>'+wt(w.kg)+'</b></div>'+
+   '<div class="wrow'+(w.byVol?' on':'')+'"><span>По объёму</span><i><b style="width:'+(w.volKg/m*100).toFixed(0)+'%"></b></i><b>'+wt(w.volKg)+'</b></div></div>';
+}
+function renderQuote(){
+  const w=airWeight(C), b=bestOf(cFrom(),cTo(),C);
+  let h=weightBox(w);
+  if(b){ const o=b.o;
+    h+='<div class="quote"><div class="quote-top"><div>'+acArt(o.ac)+'</div><div><b>'+esc(AL[o.air].n)+'</b><small>'+esc(pathText(o.path))+'</small><small>'+o.days[0]+'–'+o.days[1]+' дня · '+(acFreighter(o.ac)?'грузовой самолёт':'пассажирский рейс')+'</small></div></div>'+
+      '<div class="price"><b>'+(b.min===b.max?'':'<i>от</i> ')+money(b.min)+'</b><span>'+money(b.rate,'/кг')+' · подходящих рейсов: '+b.n+'</span></div></div>';
+  } else {
+    const any=airOptions(cFrom(),cTo(),C);
+    h+='<div class="quote"><b>'+(any.length?'Регулярный рейс этот груз не возьмёт':'Регулярных рейсов по направлению нет')+'</b>'+(any.length?'<small style="display:block;color:#FCA5A5;font-size:13px;margin-top:4px">'+esc(any[0].why[0])+'</small>':'')+'<small style="display:block;color:var(--muted);font-size:13px;margin-top:4px">Оставьте заявку: экспедиторы предложат грузовой чартер</small></div>';
+  }
+  $('#calcOut').innerHTML=h;
+}
+
+/* ---------- разделы ---------- */
+function renderSections(){
+  $('#artBelly').innerHTML=acArt('A321'); $('#artFr').innerHTML=acArt('B748F');
+  const caps=[['A321','Пассажирский'],['B763','Пассажирский широкий'],['B763F','Грузовой'],['B77F','Грузовой'],['B748F','Грузовой']];
+  $('#caps').innerHTML=caps.map(c=>'<div class="cap-row'+(acFreighter(c[0])?'':' belly')+'"><span>'+AC[c[0]][0]+'<small>'+c[1]+'</small></span><i><b style="width:'+Math.max(2,AC[c[0]][2]/134*100).toFixed(1)+'%"></b></i><b>'+dec(AC[c[0]][2])+' т</b></div>').join('');
+  const ex=[['Запчасти: 1 место 80 кг','60 × 40 × 40 см',{pcs:1,kg:80,l:60,w:40,h:40}],['Пуховики: 10 коробок, 120 кг','60 × 50 × 50 см каждая',{pcs:10,kg:120,l:60,w:50,h:50}],['Подушки: 20 коробок, 90 кг','70 × 50 × 50 см каждая',{pcs:20,kg:90,l:70,w:50,h:50}]];
+  $('#wex').innerHTML=ex.map(e=>{const w=airWeight(e[2]);return '<div class="wex-row"><div><b>'+e[0]+'</b><small>'+e[1]+' · по весам '+wt(w.kg)+', по объёму '+wt(w.volKg)+'</small></div><div class="res">'+wt(w.chg)+'<small>'+(w.byVol?'платят за объём':'платят за вес')+'</small></div></div>'}).join('');
+  const belly={gen:1,exp:1,temp:1,dg:0,val:1,big:0,live:1};
+  $('#ctl').innerHTML=CT.map(c=>'<div class="ct-row">'+ctArt(c[0],44)+'<b>'+c[1]+'</b><p>'+c[2]+'</p><div class="ct-how"><span class="chip '+(belly[c[0]]?'y':'n')+'">пассажирский рейс</span><span class="chip y">грузовой самолёт</span></div></div>').join('');
+  $('#checks').innerHTML=CHECKS.map(c=>'<div class="ck-row"><i>✓</i><div><b>'+c[1]+'</b><small>'+c[2]+'</small></div></div>').join('');
+  const D=[['CN','Китай'],['AE','ОАЭ'],['TR','Турция'],['DE','Европа'],['KR','Южная Корея'],['IN','Индия'],['UZ','Узбекистан']];
+  $('#pDirs').innerHTML=D.map(d=>'<button type="button" data-c="'+d[0]+'" onclick="this.classList.toggle(\'on\')">'+d[1]+'</button>').join('');
+  const tr=getReqs().filter(r=>r.st==='transit'&&r.awb).slice(0,3);
+  $('#demoAwb').innerHTML='<span>Примеры:</span>'+tr.map(r=>'<button type="button" data-noi18n onclick="trackFind(\''+r.awb+'\')">'+r.awb+'</button>').join('');
+  renderDirs();
+}
+function renderDirs(){
+  $('#dirs').innerHTML=POP.map(p=>{const b=bestOf(p[0],p[1],popCargo); if(!b) return '';
+    return '<button class="dir" type="button" onclick="pickDir(\''+p[0]+'\',\''+p[1]+'\')"><span><b>'+esc(apn(p[0]))+' <u>→</u> '+esc(apn(p[1]))+'</b><small>'+[...new Set(b.all.map(o=>AL[o.air].n))].slice(0,3).map(esc).join(', ')+' · '+b.o.days[0]+'–'+b.o.days[1]+' дня</small></span><span class="p">'+money(b.rate,'/кг')+'<small>рейсов: '+b.n+'</small></span></button>'}).join('');
+}
+function pickDir(a,b){ C.imp=1; C.far=a; C.kz=b; LS.set('operelleAirCalc',C); renderCalc(); const el=$('#calc'); if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+/* ---------- отслеживание ---------- */
+function trackHTML(r,id){
+  const t=genTrack(r), o=reqOffer(r), p=airPath(r,o), routes=[]; for(let i=0;i<p.length-1;i++) routes.push({a:p[i],b:p[i+1],main:1});
+  const cur=t.ev[Math.max(0,t.done-1)];
+  return '<div><div class="mapbox">'+airMap({id:id||'k',codes:0,routes,planes:t.leg?[{a:t.leg.from,b:t.leg.to,t:t.leg.t,ground:t.leg.ground}]:[],labels:p,box:fitBox(p)})+'</div>'+
+    '<div class="panel" style="margin-top:14px"><div class="kv"><span>Авианакладная</span><b data-noi18n>'+r.awb+'</b></div><div class="kv"><span>Маршрут</span><b>'+esc(pathText(p))+'</b></div><div class="kv"><span>Авиакомпания</span><b>'+esc(AL[o.air].n)+'</b></div>'+
+    '<div class="kv"><span>Сейчас</span><b>'+(cur?EV[cur[0]]+' · '+esc(apn(cur[2])):'—')+'</b></div><div class="kv"><span>Прилёт</span><b>'+(t.eta?fDT(t.eta):'—')+'</b></div></div></div>'+
+   '<div class="panel"><h3>Статусы</h3><div class="tline">'+t.ev.map((e,i)=>'<div class="ev'+(i<t.done?'':' todo')+'"><b>'+EV[e[0]]+'</b><small>'+esc(apn(e[2]))+' · '+fDT(e[1])+'</small></div>').join('')+'</div></div>';
+}
+function fitBox(p){
+  const xs=p.map(k=>apxy(k)[0]), ys=p.map(k=>apxy(k)[1]), d=Math.hypot(Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys));
+  let x0=Math.min(...xs)-70,x1=Math.max(...xs)+90,y0=Math.min(...ys)-d*.24-40,y1=Math.max(...ys)+50, w=x1-x0,h=y1-y0;
+  if(w<560){x0-=(560-w)/2;w=560}
+  if(w/h<1.9){const nw=h*1.9;x0-=(nw-w)/2;w=nw}else{const nh=w/1.9;y0-=(nh-h)/2;h=nh}
+  return [Math.round(x0),Math.round(y0),Math.round(w),Math.round(h)];
+}
+function trackFind(v){
+  const inp=$('#awbIn'); if(v) inp.value=v; const r=findAwb(inp.value), out=$('#trkOut');
+  if(!r){ out.hidden=true; toast('Груз с такой накладной не найден. Проверьте 11 цифр номера','warn'); return; }
+  out.hidden=false; out.innerHTML=trackHTML(r,'k');
+}
+
+/* ---------- заявка ---------- */
+function openModal(html,cls){ $('#modal-root').innerHTML='<div class="ov" onclick="if(event.target===this)closeModal()"><div class="dlg '+(cls||'')+'" role="dialog" aria-modal="true">'+html+'</div></div>'; if(document.body&&document.body.style) document.body.style.overflow='hidden'; }
+function closeModal(){ $('#modal-root').innerHTML=''; if(document.body&&document.body.style) document.body.style.overflow=''; cab.open=false; }
+const dhead=t=>'<div class="dlg-head"><h3>'+t+'</h3><button class="x" type="button" onclick="closeModal()" aria-label="Закрыть">✕</button></div>';
+function openOrder(){
+  const w=airWeight(C), me=LS.get('operelleAirMe',{});
+  if(!w.kg||!w.m3){ toast('Укажите вес и размеры груза','warn'); return; }
+  openModal(dhead('Заявка на перевозку')+'<form onsubmit="return submitOrder(event)" style="display:flex;flex-direction:column;min-height:0;flex:1"><div class="dlg-body">'+
+   '<div class="kv"><span>Маршрут</span><b>'+esc(apn(cFrom()))+' → '+esc(apn(cTo()))+'</b></div><div class="kv" style="margin-bottom:14px"><span>Оплачиваемый вес</span><b>'+wt(w.chg)+' · '+ct(C.type)[1].toLowerCase()+'</b></div>'+
+   '<div class="field"><label for="oName">Что везём</label><input id="oName" required maxlength="80" placeholder="например: смартфоны, 24 коробки"></div>'+
+   '<div class="grid2"><div class="field"><label for="oMe">Ваше имя</label><input id="oMe" required maxlength="60" value="'+esc(me.name||'')+'"></div><div class="field"><label for="oPhone">Телефон</label><input id="oPhone" required type="tel" maxlength="24" placeholder="+7 700 000 00 00" value="'+esc(me.phone||'')+'"></div></div>'+
+   '<div class="field"><label for="oCo">Компания</label><input id="oCo" maxlength="80" placeholder="ТОО или ИП" value="'+esc(me.company||'')+'"></div>'+
+   '<label class="check"><input type="checkbox" id="oOk" required><span>Согласен с правилами площадки: она сводит стороны, перевозку оплачиваю экспедитору</span></label>'+
+   '</div><div class="dlg-foot"><button class="btn btn-line" type="button" onclick="closeModal()">Отмена</button><button class="btn btn-gold" type="submit">Отправить заявку</button></div></form>');
+}
+function submitOrder(e){
+  if(e&&e.preventDefault) e.preventDefault();
+  const me={name:$('#oMe').value.trim(),phone:$('#oPhone').value.trim(),company:$('#oCo').value.trim()}; LS.set('operelleAirMe',me);
+  const r={id:newReqId(),from:cFrom(),to:cTo(),cargo:{name:$('#oName').value.trim(),type:C.type,pcs:C.pcs,kg:C.kg,l:C.l,w:C.w,h:C.h},
+    client:{name:me.name,company:me.company||'Частное лицо',phone:me.phone},st:'new',at:new Date().toISOString(),src:'site',sent:[],offers:[],log:[]};
+  logReq(r,'Заявка с сайта','Заказчик'); saveReq(r);
+  openCab(r.id); simulate(r.id); return false;
+}
+/* агенты ведут заявку сами: подбор рейсов, запрос цен, ответы экспедиторов (в пробной версии по таймеру) */
+const TM={};
+function later(id,ms,fn){ clearTimeout(TM[id]); TM[id]=setTimeout(()=>{ reloadStore(); const r=req(id); if(r){ fn(r); refreshCab(); } },ms); }
+function simulate(id){
+  if(!getCfg().auto) return;
+  const r=req(id); if(!r) return;
+  if(r.st==='new') later(id,2600,x=>{ if(x.st!=='new') return; if(fwFor(x).length){ reqSend(x); simulate(id); } });
+  else if(r.st==='rfq') later(id,4200,x=>{ if(x.st!=='rfq') return; reqOffers(x); if(x.st==='offers') toast('Экспедиторы ответили: предложений '+x.offers.length); });
+  else if(r.st==='agreed') later(id,4200,x=>{ if(x.st!=='agreed') return; reqBook(x); toast('Рейс забронирован. Авианакладная '+x.awb); simulate(id); });
+  else if(r.st==='booked') later(id,5200,x=>{ if(x.st!=='booked') return; reqDepart(x); toast('Груз вылетел','info'); });
+}
+
+/* ---------- кабинет: мои заявки ---------- */
+const cab={open:false,id:null};
+const myReqs=()=>getReqs().filter(r=>r.src==='site');
+function openCab(id){
+  cab.open=true; reloadStore(); const mine=myReqs(); cab.id=id||cab.id||(mine[0]&&mine[0].id)||null;
+  if(cab.id&&!req(cab.id)) cab.id=mine[0]?mine[0].id:null;
+  renderCab();
+}
+function refreshCab(){ if(cab.open) renderCab(); }
+function cabPick(id){ cab.id=id; renderCab(); if(id) simulate(id); }
+function renderCab(){
+  const mine=myReqs(), r=cab.id?req(cab.id):null, demo=getReqs().find(x=>x.id==='AIR-26045');
+  const item=x=>'<button class="cab-item'+(r&&r.id===x.id?' on':'')+'" type="button" onclick="cabPick(\''+x.id+'\')"><span style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span class="cab-no">'+x.id+'</span><span class="badge '+ST[x.st][1]+'">'+ST[x.st][0]+'</span></span><b>'+esc(apn(x.from))+' → '+esc(apn(x.to))+'</b><small>'+esc(x.cargo.name)+' · '+wt(airWeight(x.cargo).chg)+'</small></button>';
+  const list=mine.length?mine.map(item).join(''):'<div class="empty">Заявок пока нет.<br>Посчитайте груз и нажмите «Получить цены экспедиторов»</div>'+(demo?'<button class="btn btn-line btn-sm" type="button" onclick="cabPick(\'AIR-26045\')">Показать пример заявки</button>':'');
+  openModal(dhead('Мои заявки')+'<div class="dlg-body"><div class="cab-grid'+(r?' has':'')+'"><div class="cab-list">'+list+'</div><div class="cab-main">'+(r?cabDetail(r):'<div class="empty">Выберите заявку слева</div>')+'</div></div></div>','cab');
+  cab.open=true;
+}
+function cabDetail(r){
+  const w=airWeight(r.cargo), o=reqOffer(r), si=stageIdx(r.st), demo=r.src!=='site';
+  let h='<button class="btn btn-line btn-sm cab-back" type="button" onclick="cabPick(null)">← Все заявки</button>'+
+   '<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h3 style="font:800 30px/1 var(--cd);text-transform:uppercase">'+esc(apn(r.from))+' → '+esc(apn(r.to))+'</h3><span class="badge '+ST[r.st][1]+'">'+ST[r.st][0]+'</span></div>'+
+   '<p style="color:var(--muted);margin-top:6px">'+r.id+' · '+esc(r.cargo.name)+' · мест: '+r.cargo.pcs+' · оплачиваемый вес '+wt(w.chg)+(demo?' · пример':'')+'</p>'+stageBar(r)+'<div style="height:14px"></div>';
+  if(si===0){
+    const op=airOptions(r.from,r.to,r.cargo);
+    h+='<div class="wait"><span class="spin"></span><span>Агент «Маршрут» подобрал рейсы. Агент «Подбор» отправляет запрос экспедиторам</span></div>'+op.map(optHTML).join('');
+  } else if(si===1){
+    h+='<div class="wait"><span class="spin"></span><span>Запрос получили экспедиторы: '+r.sent.length+'. Ждём цены</span></div>'+airOptions(r.from,r.to,r.cargo).filter(x=>x.ok).map(optHTML).join('');
+  } else if(si===2){
+    h+='<p style="color:var(--muted);margin-bottom:12px">Выберите предложение. После выбора откроются контакты экспедитора, а он увидит ваши.</p>'+r.offers.map((x,i)=>offerHTML(r,x,i,true)).join('');
+  } else {
+    const f=fw(o.fw);
+    if(r.awb) h+='<div class="trk-out" style="margin:0 0 14px">'+trackHTML(r,'cb')+'</div>';
+    else h+='<div class="wait"><span class="spin"></span><span>Экспедитор бронирует рейс. Номер авианакладной появится здесь</span></div>';
+    h+='<div class="panel"><h3>Ваш экспедитор</h3><div class="kv"><span>Компания</span><b>'+esc(f.name)+' <span class="stars">★ '+dec(f.rating)+'</span></b></div><div class="kv"><span>Контакт</span><b>'+esc(f.person)+'</b></div><div class="kv"><span>Телефон</span><b>'+esc(f.phone)+'</b></div>'+
+       '<div class="kv"><span>Цена перевозки</span><b>'+money(o.total)+'</b></div><div class="kv"><span>Кому платить</span><b>Экспедитору напрямую</b></div></div>';
+    if(r.st==='arrived') h+='<div class="panel" style="margin-top:14px"><h3>Груз прибыл</h3><p style="color:var(--muted)">Экспедитор сообщит, когда груз пройдёт таможню и его можно забрать.</p>'+(demo?'':'<button class="btn btn-gold btn-sm" style="margin-top:12px" type="button" onclick="cabDone(\''+r.id+'\')">Груз получен</button>')+'</div>';
+    if(r.st==='done') h+='<div class="panel" style="margin-top:14px"><h3>Оцените экспедитора</h3><div class="rate">'+[1,2,3,4,5].map(n=>'<button type="button" class="'+(r.rate&&r.rate.c>=n?'on':'')+'" onclick="cabRate(\''+r.id+'\','+n+')" aria-label="Оценка '+n+'">★</button>').join('')+'</div></div>';
+  }
+  return h;
+}
+const optHTML=o=>'<div class="opt'+(o.ok?'':' off')+'"><div>'+acArt(o.ac)+'</div><div><b>'+esc(AL[o.air].n)+' · '+AC[o.ac][0]+'</b><small>'+esc(pathText(o.path))+' · '+o.days[0]+'–'+o.days[1]+' дня</small>'+(o.ok?'<small>'+(acFreighter(o.ac)?'грузовой самолёт':'пассажирский рейс')+' · ориентир <span>'+fxText(money(o.q.total))+'</span></small>':'<small class="no">'+esc(o.why[0])+'</small>')+'</div></div>';
+function offerHTML(r,x,i,can){
+  const f=fw(x.fw);
+  return '<div class="offer'+(r.pick===i?' sel':'')+'"><div class="offer-top"><div style="min-width:0"><b style="font-size:17px">'+(can?'Экспедитор '+(i+1):esc(f.name))+'</b> <span class="stars">★ '+dec(f.rating)+'</span><small class="m">'+esc(f.city)+' · сделок: '+f.deals+(f.iata?' · аккредитация IATA':'')+' · проверен площадкой</small></div>'+
+    '<div class="p">'+money(x.total)+'<small>'+fxText(money(x.rate,'/кг'))+'</small></div></div>'+
+    '<div class="kv" style="margin-top:8px"><span>Рейс</span><b>'+esc(AL[x.air].n)+' · '+esc(pathText(x.path))+'</b></div><div class="kv"><span>Срок</span><b>'+x.days[0]+'–'+x.days[1]+' дня, вылет '+fDs(new Date(x.dep))+'</b></div>'+
+    '<small class="m" style="margin-top:6px">'+esc(x.note)+'</small>'+(can?'<button class="btn btn-gold btn-sm" style="margin-top:12px" type="button" onclick="cabChoose(\''+r.id+'\','+i+')">Выбрать</button>':'')+'</div>';
+}
+function cabChoose(id,i){
+  const r=req(id); if(!r||r.st!=='offers') return;
+  if(r.src!=='site'){ toast('Это пример. Выбирать можно в своей заявке','info'); return; }
+  reqPick(r,i,'Заказчик'); toast('Контакты экспедитора открыты'); renderCab(); simulate(id);
+}
+function cabDone(id){ const r=req(id); if(!r) return; reqDone(r); renderCab(); }
+function cabRate(id,n){ const r=req(id); if(!r||r.src!=='site') return; r.rate=Object.assign({f:5},r.rate,{c:n}); logReq(r,'Заказчик поставил оценку: '+n,'Заказчик'); saveReq(r); renderCab(); toast('Спасибо. Оценка попадёт в рейтинг экспедитора'); }
+
+/* ---------- анкета экспедитора ---------- */
+function submitPartner(e){
+  if(e&&e.preventDefault) e.preventDefault();
+  const dirs=[...document.querySelectorAll('#pDirs button.on')].map(b=>b.dataset.c);
+  if(!dirs.length){ toast('Отметьте хотя бы одно направление','warn'); return false; }
+  const all=dirs.includes('DE')?dirs.concat(['BE','NL','LU']):dirs, n=Object.keys(LS.get('operelleAirFw',{})).filter(k=>k.indexOf('FW-S')===0).length+1;
+  const iata=$('#pIata').checked?1:0;
+  saveFw({id:'FW-S'+n,name:$('#pName').value.trim(),city:$('#pCity').value.trim(),iata,since:new Date().getFullYear(),dirs:all,types:['gen','exp'],rating:0,deals:0,resp:0,st:'review',
+    person:$('#pPerson').value.trim(),phone:$('#pPhone').value.trim(),mail:'—',agent:'',checks:{reg:0,iata:0,contract:0,ins:0,ref:0},src:'site'});
+  $('#pForm').reset(); document.querySelectorAll('#pDirs button.on').forEach(b=>b.classList.remove('on'));
+  toast('Заявка отправлена. Проверим документы и свяжемся с вами'); return false;
+}
+
+/* ---------- запуск ---------- */
+function onCurChange(){ renderTick(); renderQuote(); renderDirs(); if(cab.open) renderCab(); const o=$('#trkOut'); if(o&&!o.hidden) trackFind(); }
+const HERO_H={ru:'Груз самолётом в <em>Казахстан</em>',kk:'<em>Қазақстанға</em> ұшақпен жүк',en:'Air cargo to <em>Kazakhstan</em>',zh:'空运货物至<em>哈萨克斯坦</em>'};
+function heroTitle(){ $('#heroH').innerHTML=HERO_H[LANG]||HERO_H.ru; }
+function onLangChange(){ heroTitle(); renderTick(); renderCalc(); renderSections(); if(cab.open) renderCab(); }
+(function init(){
+  $('#brandLogo').innerHTML=airLogo(34);
+  document.querySelectorAll('#dirTabs button').forEach(b=>b.addEventListener('click',()=>cSet('imp',+b.dataset.imp)));
+  fxRefresh(); heroTitle(); renderTick(); renderHeroMap(); renderCalc(); renderSections();
+  if(typeof window!=='undefined'&&window.addEventListener){
+    window.addEventListener('storage',e=>{ if(e.key&&e.key.indexOf('operelleAir')===0){ reloadStore(); refreshCab(); } });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('#modal-root').innerHTML) closeModal(); });
+    const a=$('#awbIn'); if(a&&a.addEventListener) a.addEventListener('keydown',e=>{ if(e.key==='Enter') trackFind(); });
+  }
+  myReqs().forEach(r=>simulate(r.id));
+})();
+
+</script>
+</body>
+</html>
