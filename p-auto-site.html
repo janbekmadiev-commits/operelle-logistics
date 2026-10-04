@@ -3438,6 +3438,43 @@ renderBoard(); renderDirs(); renderPlans();
 })();
 </script>
 <script>
+
+/* ============================================================
+   КУРСЫ НАЦБАНКА КАЗАХСТАНА
+   Файл rates.json на сайте OPERELLE обновляется каждый час с официального сайта Нацбанка.
+   Страница читает его при открытии и раз в час и кладёт курсы в общий ключ operelleFx,
+   из которого суммы считают все программы. Ручная правка курса в головной панели держится до следующего изменения курсов Нацбанка.
+   ============================================================ */
+(function(){
+  if(typeof fetch!=='function'||typeof localStorage==='undefined'||window.__operelleRates) return; window.__operelleRates=1;
+  var URL_='https://janbekmadiev-commits.github.io/operelle-logistics/rates.json', KEY='operelleFx', META='operelleFxMeta';
+  var T={ru:'Курсы Нацбанка Казахстана на ',kk:'ҚР Ұлттық Банкінің бағамдары, ',en:'National Bank of Kazakhstan rates, ',zh:'哈萨克斯坦国家银行汇率，'};
+  var get=function(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}};
+  function note(){
+    var m=get(META); if(!m.date||!document.querySelectorAll) return;
+    var lang=typeof LANG!=='undefined'&&T[LANG]?LANG:'ru';
+    document.querySelectorAll('.fxs-cur .fxs-menu').forEach(function(el){
+      var n=el.querySelector('.fx-src'); if(!n){n=document.createElement('div');n.className='fx-src';n.style.cssText='padding:9px 10px 5px;margin-top:4px;border-top:1px solid #2A2E36;color:#8F96A3;font:500 12px/1.35 -apple-system,"Segoe UI",Roboto,Arial,sans-serif';el.appendChild(n)}
+      n.textContent=T[lang]+m.date;
+    });
+  }
+  function apply(d){
+    if(!d||!d.rates||typeof FX_LIST==='undefined') return;
+    var pick={}; FX_LIST.forEach(function(x){var v=d.rates[x[0]]; if(x[0]!=='KZT'&&v>0) pick[x[0]]=v});
+    var sig=d.date+'|'+JSON.stringify(pick), meta=get(META);
+    if(meta.sig===sig){ note(); return; }
+    var cur=get(KEY); Object.keys(pick).forEach(function(c){cur[c]=pick[c]});
+    try{localStorage.setItem(KEY,JSON.stringify(cur));localStorage.setItem(META,JSON.stringify({date:d.date,at:d.fetched,sig:sig}))}catch(e){return}
+    try{ if(typeof onCurChange==='function') onCurChange(); }catch(e){}
+    try{ if(typeof fxRefresh==='function') fxRefresh(); }catch(e){}
+    note();
+  }
+  if(typeof fxRefresh==='function'){ var _fr=fxRefresh; fxRefresh=function(){ _fr.apply(this,arguments); note(); }; }
+  function run(){ fetch(URL_+'?h='+Math.floor(Date.now()/36e5),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(apply).catch(function(){}); }
+  note(); run(); setInterval(run,36e5);
+})();
+</script>
+<script>
 /* переход между программами OPERELLE, когда страница открыта сама по себе (ссылка для телефона):
    узкая кнопка у правого края открывает список: единая панель и сайт с панелью каждого направления.
    Страницы лежат отдельными файлами рядом, переход идёт обычными ссылками, без встроенных окон. */

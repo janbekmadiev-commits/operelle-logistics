@@ -1,0 +1,32 @@
+# Каждый час берёт официальные курсы валют с сайта Национального Банка Казахстана
+# и сохраняет их в rates.json. Страницы сайта читают этот файл и показывают суммы по этим курсам.
+name: Курсы Нацбанка Казахстана
+
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rates
+  cancel-in-progress: false
+
+jobs:
+  rates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Курсы с сайта Нацбанка
+        run: python3 tools/nbk_rates.py rates.json
+      - name: Сохранить, если курсы изменились
+        run: |
+          git add rates.json
+          if ! git diff --cached --quiet; then
+            git config user.name "operelle-rates"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Курсы Нацбанка Казахстана: обновление"
+            git push
+          fi
