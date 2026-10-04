@@ -1339,8 +1339,8 @@ const LOGO={'3V':['UklGRtgYAABXRUJQVlA4WAoAAAAQAAAA6wAAXwAAQUxQSBMOAAAB8Mf//+q0/
 /* фото и логотипы подключаются стилями: данные лежат в странице один раз */
 const PH_CSS='.ph{display:block;width:100%;background:center/contain no-repeat}.ph-sc{background-size:cover;border-radius:10px}'+
   Object.keys(PH).map(k=>'.ph-'+k+'{background-image:url(data:image/webp;base64,'+PH[k][0]+');aspect-ratio:'+PH[k][1]+'/'+PH[k][2]+'}').join('')+
-  '.al-chip{display:inline-grid;place-items:center;height:30px;padding:4px 9px;border-radius:7px;background:#fff;vertical-align:middle;flex:0 0 auto}.al-chip.sm{height:24px;padding:3px 7px;border-radius:6px}.al-chip.lg{height:46px;padding:7px 14px;border-radius:9px}'+
-  '.al-chip i{display:block;height:100%;background-position:center;background-size:contain;background-repeat:no-repeat}.al-chip.txt{background:#22262D;border:1px solid #3A3F49;color:#F2F3F5;font:700 12px/1 inherit;white-space:nowrap}'+
+  '.al-chip{display:inline-flex;align-items:center;justify-content:center;height:30px;padding:4px 9px;border-radius:7px;background:#fff;vertical-align:middle;flex:0 0 auto;max-width:100%;box-sizing:border-box}.al-chip.sm{height:24px;padding:3px 7px;border-radius:6px}.al-chip.lg{height:46px;padding:7px 14px;border-radius:9px}'+
+  '.al-chip i{display:block;height:100%;min-width:0;flex:0 1 auto;background-position:center;background-size:contain;background-repeat:no-repeat}.al-chip.txt{background:#22262D;border:1px solid #3A3F49;color:#F2F3F5;font:700 12px/1 inherit;white-space:nowrap}'+
   Object.keys(LOGO).map(k=>'.lg-'+k+'{background-image:url(data:image/webp;base64,'+LOGO[k][0]+');aspect-ratio:'+LOGO[k][1]+'/'+LOGO[k][2]+'}').join('');
 const photo=(k,label,cls)=>'<span class="ph ph-'+k+(cls?' '+cls:'')+'" role="img" aria-label="'+String(label||'').replace(/"/g,'&quot;')+'"></span>';
 (function(){if(typeof document==='undefined'||!document.head||!document.createElement)return;try{const st=document.createElement('style');st.textContent=PH_CSS;document.head.appendChild(st)}catch(e){}})();
